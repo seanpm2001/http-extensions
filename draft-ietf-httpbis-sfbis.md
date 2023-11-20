@@ -34,6 +34,16 @@ author:
 
 normative:
   HTTP: RFC9110
+  UTF8:
+    title: UTF-8, a transformation format of ISO 10646
+    author:
+    - ins: F. Yergeau
+      name: F. Yergeau
+    date: 2003-11
+    seriesinfo:
+      STD: 63
+      RFC: 3629
+    target: http://www.rfc-editor.org/info/std63
 
 informative:
   IEEE754:
@@ -48,16 +58,7 @@ informative:
       DOI:  10.1109/IEEESTD.2019.8766229
       ISBN: 978-1-5044-5924-2
 
-  UTF8:
-    title: UTF-8, a transformation format of ISO 10646
-    author:
-    - ins: F. Yergeau
-      name: F. Yergeau
-    date: 2003-11
-    seriesinfo:
-      STD: 63
-      RFC: 3629
-    target: http://www.rfc-editor.org/info/std63
+  UNICHARS: I-D.draft-bray-unichars
   RFC9113:
     display: HTTP/2
   HPACK: RFC7541
@@ -132,6 +133,8 @@ This document uses algorithms to specify parsing and serialization behaviors. Wh
 
 For serialization to HTTP fields, the algorithms define the recommended way to produce them. Implementations MAY vary from the specified behavior so long as the output is still correctly handled by the parsing algorithm described in {{text-parse}}.
 
+When referring to non-ASCII code points, the Unicode standard notation, using "U+" followed by the hexadecimal value, zero-padded to four places, is used
+(see also {{Section 1.1 of UNICHARS}}).
 
 # Defining New Structured Fields {#specify}
 
@@ -498,7 +501,9 @@ Parsers MUST support Dates whose values include all days in years 1 to 9999 (i.e
 
 ### Display Strings {#displaystring}
 
-Display Strings are similar to Strings, in that they consist of zero or more characters, but they allow Unicode content, unlike Strings.
+Display Strings are similar to Strings, in that they consist of zero or more characters, but they allow non-ASCII content, unlike Strings. Each
+character in a Display String is a "Unicode Scalar" as per {{Section 4.1 of UNICHARS}}; this excludes the high-surrogate and low-surrogate code
+points in the range U+D800 to U+DFFF.
 
 Display Strings are intended for use in cases where a value is displayed to end users, and therefore may need to carry non-ASCII content. It is NOT RECOMMENDED that they be used in situations where a String ({{string}}) or Token ({{token}}) would be adequate, because Unicode has processing considerations (e.g., normalization) and security considerations (e.g., homograph attacks) that make it more difficult to handle correctly.
 
@@ -717,9 +722,9 @@ Given a Date as input_date, return an ASCII string suitable for use in an HTTP f
 
 ### Serializing a Display String {#ser-display}
 
-Given a sequence of Unicode codepoints as input_sequence, return an ASCII string suitable for use in an HTTP field value.
+Given a sequence of Unicode scalars as input_sequence, return an ASCII string suitable for use in an HTTP field value.
 
-0. If input_sequence is not a sequence of Unicode codepoints, fail serialization.
+0. If input_sequence is not a sequence of Unicode scalars, fail serialization.
 1. Let byte_array be the result of applying UTF-8 encoding ({{Section 3 of UTF8}}) to input_sequence.
 2. Let encoded_string be a string containing "%" followed by DQUOTE.
 3. For each byte in byte_array:
@@ -997,7 +1002,7 @@ Given an ASCII string as input_string, return a Date. input_string is modified t
 
 ### Parsing a Display String {#parse-display}
 
-Given an ASCII string as input_string, return a sequence of Unicode codepoints. input_string is modified to remove the parsed value.
+Given an ASCII string as input_string, return a sequence of Unicode scalars. input_string is modified to remove the parsed value.
 
 0. If the first two characters of input_string are not "%" followed by DQUOTE, fail parsing.
 1. Discard the first two characters of input_string.
@@ -1017,6 +1022,11 @@ Given an ASCII string as input_string, return a sequence of Unicode codepoints. 
       1. Let byte be the result of applying ASCII encoding to char.
       2. Append byte to byte_array.
 4. Reached the end of input_string without finding a closing DQUOTE; fail parsing.
+
+NOTE: many UTF-8 decoders by default accept high-surrogate and low-surrogate code points; thus it may be necessary to configure the decoder to reject
+invalid UTF-8 byte sequences.
+
+Examples of invalid byte sequences are "%80" (truncated UTF-8 sequence) and "%ed%ba%ad" (surrogate code point U+DEAD).
 
 
 # IANA Considerations {#iana}
@@ -1056,7 +1066,7 @@ The size of most types defined by Structured Fields is not limited; as a result,
 It is possible for parties with the ability to inject new HTTP fields to change the meaning
 of a Structured Field. In some circumstances, this will cause parsing to fail, but it is not possible to reliably fail in all such circumstances.
 
-The Display String type can convey any possible Unicode code point without sanitization; for example, they might contain unassigned code points, control points (including NUL), or noncharacters. Therefore, applications consuming Display Strings need to consider strategies such as filtering or escaping untrusted content before displaying it. See also {{UNICODE-SECURITY}} and {{?I-D.draft-bray-unichars}}.
+The Display String type can convey any possible Unicode code point without sanitization; for example, they might contain unassigned code points, control points (including NUL), or noncharacters. Therefore, applications consuming Display Strings need to consider strategies such as filtering or escaping untrusted content before displaying it. See also {{UNICODE-SECURITY}} and {{Section 7 of UNICHARS}}.
 
 --- back
 
