@@ -5,7 +5,7 @@
 HTTP                                                      P. Meenan, Ed.
 Internet-Draft                                             Y. Weiss, Ed.
 Intended status: Standards Track                              Google LLC
-Expires: 23 May 2024                                    20 November 2023
+Expires: 30 May 2024                                    27 November 2023
 
 
                     Compression Dictionary Transport
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 May 2024.
+   This Internet-Draft will expire on 30 May 2024.
 
 Copyright Notice
 
@@ -75,13 +75,15 @@ Table of Contents
        2.1.2.  match-search
        2.1.3.  match-dest
        2.1.4.  ttl
-       2.1.5.  type
-       2.1.6.  Examples
+       2.1.5.  id
+       2.1.6.  type
+       2.1.7.  Examples
      2.2.  Available-Dictionary
        2.2.1.  Dictionary freshness requirement
        2.2.2.  Dictionary URL matching
        2.2.3.  Multiple matching dictionaries
-     2.3.  Content-Dictionary
+     2.3.  Dictionary-ID
+     2.4.  Content-Dictionary
    3.  Negotiating the compression algorithm
      3.1.  Accept-Encoding
      3.2.  Content-Encoding
@@ -126,7 +128,7 @@ Table of Contents
 
    The Use-As-Dictionary response header is a Structured Field
    [STRUCTURED-FIELDS] sf-dictionary with values for "match", "match-
-   search", "match-dest", "ttl", and "type".
+   search", "match-dest", "ttl", "id", and "type".
 
 2.1.1.  match
 
@@ -193,7 +195,27 @@ Table of Contents
 
    The "ttl" value is optional and defaults to 1209600 (14 days).
 
-2.1.5.  type
+2.1.5.  id
+
+   The "id" value of the Use-As-Dictionary header is a sf-string value
+   that specifies a server identifier for the dictionary.  If an "id"
+   value is present then it MUST be sent to the server in a "Dictionary-
+   ID" request header when the dictionary is advertised as being
+   available.
+
+   The server identifier MUST be treated as an opaque string by the
+   client.
+
+   The server identifier MUST NOT be relied upon by the server to
+   guarantee the contents of the dictionary.  The dictionary hash MUST
+   be validated before use.
+
+   The "id" value string length (after any decoding) supports up to 1024
+   characters.
+
+   The "id" value is optional.
+
+2.1.6.  type
 
    The "type" value of the Use-As-Dictionary header is a sf-string value
    that describes the file format of the supplied dictionary.
@@ -206,9 +228,9 @@ Table of Contents
 
    The "type" value is optional and defaults to "raw".
 
-2.1.6.  Examples
+2.1.7.  Examples
 
-2.1.6.1.  Path Prefix
+2.1.7.1.  Path Prefix
 
    A response that contained a response header:
 
@@ -222,7 +244,7 @@ Table of Contents
    expiring as a dictionary in 7 days independent of the cache lifetime
    of the resource.
 
-2.1.6.2.  Versioned Directories
+2.1.7.2.  Versioned Directories
 
    A response that contained a response header:
 
@@ -310,7 +332,23 @@ Table of Contents
    equivalent destination, path and search precedence, the most recently
    fetched dictionary takes precedence.
 
-2.3.  Content-Dictionary
+2.3.  Dictionary-ID
+
+   When a HTTP client makes a request for a resource for which it has an
+   appropriate dictionary and the dictionary was stored with a server-
+   provided "id" in the Use-As-Dictionary response then the client MUST
+   echo the stored "id" in a "Dictionary-ID" request header.
+
+   The "Dictionary-ID" request header is a Structured Field
+   [STRUCTURED-FIELDS] sf-string of up to 1024 characters (after any
+   decoding) and MUST be identical to the server-provided "id".
+
+   For example:
+
+   Available-Dictionary: :pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4=:
+   Dictionary-ID: "/v1/main.js 33a64df551425fcc55e4d42a148795d9f25f89d4"
+
+2.4.  Content-Dictionary
 
    When a HTTP server responds with a resource that is encoded with a
    dictionary the server MUST send the hash of the dictionary that was
@@ -407,7 +445,9 @@ Table of Contents
     +----------------------+-----------+------------------------------+
     | Available-Dictionary | permanent | Section 2.2 of this document |
     +----------------------+-----------+------------------------------+
-    | Content-Dictionary   | permanent | Section 2.3 of this document |
+    | Dictionary-ID        | permanent | Section 2.3 of this document |
+    +----------------------+-----------+------------------------------+
+    | Content-Dictionary   | permanent | Section 2.4 of this document |
     +----------------------+-----------+------------------------------+
 
                                   Table 3

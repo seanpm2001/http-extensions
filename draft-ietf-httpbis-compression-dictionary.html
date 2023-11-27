@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Meenan &amp; Weiss</td>
-<td class="center">Expires 23 May 2024</td>
+<td class="center">Expires 30 May 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-httpbis-compression-dictionary-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-11-20" class="published">20 November 2023</time>
+<time datetime="2023-11-27" class="published">27 November 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-05-23">23 May 2024</time></dd>
+<dd class="expires"><time datetime="2024-05-30">30 May 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1112,7 +1112,7 @@ Zstandard <span>[<a href="#RFC8878" class="cite xref">RFC8878</a>]</span>).<a hr
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 May 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 30 May 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1163,10 +1163,13 @@ Zstandard <span>[<a href="#RFC8878" class="cite xref">RFC8878</a>]</span>).<a hr
                     <p id="section-toc.1-1.2.2.1.2.4.1"><a href="#section-2.1.4" class="auto internal xref">2.1.4</a>.  <a href="#name-ttl" class="internal xref">ttl</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.5">
-                    <p id="section-toc.1-1.2.2.1.2.5.1"><a href="#section-2.1.5" class="auto internal xref">2.1.5</a>.  <a href="#name-type" class="internal xref">type</a></p>
+                    <p id="section-toc.1-1.2.2.1.2.5.1"><a href="#section-2.1.5" class="auto internal xref">2.1.5</a>.  <a href="#name-id" class="internal xref">id</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.6">
-                    <p id="section-toc.1-1.2.2.1.2.6.1"><a href="#section-2.1.6" class="auto internal xref">2.1.6</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
+                    <p id="section-toc.1-1.2.2.1.2.6.1"><a href="#section-2.1.6" class="auto internal xref">2.1.6</a>.  <a href="#name-type" class="internal xref">type</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.7">
+                    <p id="section-toc.1-1.2.2.1.2.7.1"><a href="#section-2.1.7" class="auto internal xref">2.1.7</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
 </li>
                 </ul>
 </li>
@@ -1185,7 +1188,10 @@ Zstandard <span>[<a href="#RFC8878" class="cite xref">RFC8878</a>]</span>).<a hr
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-content-dictionary" class="internal xref">Content-Dictionary</a></p>
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-dictionary-id" class="internal xref">Dictionary-ID</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-content-dictionary" class="internal xref">Content-Dictionary</a></p>
 </li>
             </ul>
 </li>
@@ -1287,7 +1293,7 @@ be used as a dictionary for future requests for URLs that match the rules
 specified in the Use-As-Dictionary response header.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 <p id="section-2.1-2">The Use-As-Dictionary response header is a Structured Field
 <span>[<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span> sf-dictionary with values for "match", "match-search",
-"match-dest", "ttl", and "type".<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+"match-dest", "ttl", "id", and "type".<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 <div id="match">
 <section id="section-2.1.1">
           <h4 id="name-match">
@@ -1355,57 +1361,74 @@ variations.<a href="#section-2.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-2.1.4-3">The "ttl" value is optional and defaults to 1209600 (14 days).<a href="#section-2.1.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="type">
+<div id="id">
 <section id="section-2.1.5">
-          <h4 id="name-type">
-<a href="#section-2.1.5" class="section-number selfRef">2.1.5. </a><a href="#name-type" class="section-name selfRef">type</a>
+          <h4 id="name-id">
+<a href="#section-2.1.5" class="section-number selfRef">2.1.5. </a><a href="#name-id" class="section-name selfRef">id</a>
           </h4>
-<p id="section-2.1.5-1">The "type" value of the Use-As-Dictionary header is a sf-string value that
-describes the file format of the supplied dictionary.<a href="#section-2.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-2.1.5-2">"raw" is the only defined dictionary format which represents an unformatted
-blob of bytes suitable for any compression scheme to use.<a href="#section-2.1.5-2" class="pilcrow">¶</a></p>
-<p id="section-2.1.5-3">If a client receives a dictionary with a type that it does not understand, it
-MUST NOT use the dictionary.<a href="#section-2.1.5-3" class="pilcrow">¶</a></p>
-<p id="section-2.1.5-4">The "type" value is optional and defaults to "raw".<a href="#section-2.1.5-4" class="pilcrow">¶</a></p>
+<p id="section-2.1.5-1">The "id" value of the Use-As-Dictionary header is a sf-string value that
+specifies a server identifier for the dictionary. If an "id" value is present
+then it MUST be sent to the server in a "Dictionary-ID" request header when
+the dictionary is advertised as being available.<a href="#section-2.1.5-1" class="pilcrow">¶</a></p>
+<p id="section-2.1.5-2">The server identifier MUST be treated as an opaque string by the client.<a href="#section-2.1.5-2" class="pilcrow">¶</a></p>
+<p id="section-2.1.5-3">The server identifier MUST NOT be relied upon by the server to guarantee the
+contents of the dictionary. The dictionary hash MUST be validated before use.<a href="#section-2.1.5-3" class="pilcrow">¶</a></p>
+<p id="section-2.1.5-4">The "id" value string length (after any decoding) supports up to 1024
+characters.<a href="#section-2.1.5-4" class="pilcrow">¶</a></p>
+<p id="section-2.1.5-5">The "id" value is optional.<a href="#section-2.1.5-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="type">
+<section id="section-2.1.6">
+          <h4 id="name-type">
+<a href="#section-2.1.6" class="section-number selfRef">2.1.6. </a><a href="#name-type" class="section-name selfRef">type</a>
+          </h4>
+<p id="section-2.1.6-1">The "type" value of the Use-As-Dictionary header is a sf-string value that
+describes the file format of the supplied dictionary.<a href="#section-2.1.6-1" class="pilcrow">¶</a></p>
+<p id="section-2.1.6-2">"raw" is the only defined dictionary format which represents an unformatted
+blob of bytes suitable for any compression scheme to use.<a href="#section-2.1.6-2" class="pilcrow">¶</a></p>
+<p id="section-2.1.6-3">If a client receives a dictionary with a type that it does not understand, it
+MUST NOT use the dictionary.<a href="#section-2.1.6-3" class="pilcrow">¶</a></p>
+<p id="section-2.1.6-4">The "type" value is optional and defaults to "raw".<a href="#section-2.1.6-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="examples">
-<section id="section-2.1.6">
+<section id="section-2.1.7">
           <h4 id="name-examples">
-<a href="#section-2.1.6" class="section-number selfRef">2.1.6. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+<a href="#section-2.1.7" class="section-number selfRef">2.1.7. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
           </h4>
 <div id="path-prefix">
-<section id="section-2.1.6.1">
+<section id="section-2.1.7.1">
             <h5 id="name-path-prefix">
-<a href="#section-2.1.6.1" class="section-number selfRef">2.1.6.1. </a><a href="#name-path-prefix" class="section-name selfRef">Path Prefix</a>
+<a href="#section-2.1.7.1" class="section-number selfRef">2.1.7.1. </a><a href="#name-path-prefix" class="section-name selfRef">Path Prefix</a>
             </h5>
-<p id="section-2.1.6.1-1">A response that contained a response header:<a href="#section-2.1.6.1-1" class="pilcrow">¶</a></p>
-<div class="lang-http-message sourcecode" id="section-2.1.6.1-2">
+<p id="section-2.1.7.1-1">A response that contained a response header:<a href="#section-2.1.7.1-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2.1.7.1-2">
 <pre>
 NOTE: '\' line wrapping per RFC 8792
 
 Use-As-Dictionary: \
   match="/product/*", match-dest="document", ttl=604800
-</pre><a href="#section-2.1.6.1-2" class="pilcrow">¶</a>
+</pre><a href="#section-2.1.7.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-2.1.6.1-3">Would specify matching any document request for a URL with a path prefix of
+<p id="section-2.1.7.1-3">Would specify matching any document request for a URL with a path prefix of
 /product/ on the same <span>[<a href="#Origin" class="cite xref">Origin</a>]</span> as the original request, and expiring as a
-dictionary in 7 days independent of the cache lifetime of the resource.<a href="#section-2.1.6.1-3" class="pilcrow">¶</a></p>
+dictionary in 7 days independent of the cache lifetime of the resource.<a href="#section-2.1.7.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="versioned-directories">
-<section id="section-2.1.6.2">
+<section id="section-2.1.7.2">
             <h5 id="name-versioned-directories">
-<a href="#section-2.1.6.2" class="section-number selfRef">2.1.6.2. </a><a href="#name-versioned-directories" class="section-name selfRef">Versioned Directories</a>
+<a href="#section-2.1.7.2" class="section-number selfRef">2.1.7.2. </a><a href="#name-versioned-directories" class="section-name selfRef">Versioned Directories</a>
             </h5>
-<p id="section-2.1.6.2-1">A response that contained a response header:<a href="#section-2.1.6.2-1" class="pilcrow">¶</a></p>
-<div class="lang-http-message sourcecode" id="section-2.1.6.2-2">
+<p id="section-2.1.7.2-1">A response that contained a response header:<a href="#section-2.1.7.2-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2.1.7.2-2">
 <pre>
 Use-As-Dictionary: match="/app/*/main.js"
-</pre><a href="#section-2.1.6.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-2.1.7.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-2.1.6.2-3">Would match main.js in any directory under /app/ and expiring as a dictionary
-in one year.<a href="#section-2.1.6.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.1.7.2-3">Would match main.js in any directory under /app/ and expiring as a dictionary
+in one year.<a href="#section-2.1.7.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1515,25 +1538,46 @@ fetched dictionary takes precedence.<a href="#section-2.2.3-1" class="pilcrow">�
 </div>
 </section>
 </div>
-<div id="content-dictionary">
+<div id="dictionary-id">
 <section id="section-2.3">
-        <h3 id="name-content-dictionary">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-content-dictionary" class="section-name selfRef">Content-Dictionary</a>
+        <h3 id="name-dictionary-id">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-dictionary-id" class="section-name selfRef">Dictionary-ID</a>
         </h3>
-<p id="section-2.3-1">When a HTTP server responds with a resource that is encoded with a dictionary
+<p id="section-2.3-1">When a HTTP client makes a request for a resource for which it has an
+appropriate dictionary and the dictionary was stored with a server-provided
+"id" in the Use-As-Dictionary response then the client MUST echo the stored
+"id" in a "Dictionary-ID" request header.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.3-2">The "Dictionary-ID" request header is a Structured Field <span>[<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>
+sf-string of up to 1024 characters (after any decoding) and MUST be identical
+to the server-provided "id".<a href="#section-2.3-2" class="pilcrow">¶</a></p>
+<p id="section-2.3-3">For example:<a href="#section-2.3-3" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2.3-4">
+<pre>
+Available-Dictionary: :pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4=:
+Dictionary-ID: "/v1/main.js 33a64df551425fcc55e4d42a148795d9f25f89d4"
+</pre><a href="#section-2.3-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="content-dictionary">
+<section id="section-2.4">
+        <h3 id="name-content-dictionary">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-content-dictionary" class="section-name selfRef">Content-Dictionary</a>
+        </h3>
+<p id="section-2.4-1">When a HTTP server responds with a resource that is encoded with a dictionary
 the server MUST send the hash of the dictionary that was used in the
-"Content-Dictionary" response header.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<p id="section-2.3-2">The "Content-Dictionary" response header is a Structured Field
+"Content-Dictionary" response header.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-2.4-2">The "Content-Dictionary" response header is a Structured Field
 <span>[<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span> sf-dictionary <span>[<a href="#SHA-256" class="cite xref">SHA-256</a>]</span> hash of the contents of the
-dictionary that was used to encode the response.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
-<p id="section-2.3-3">If the HTTP response contains a "Content-Dictionary" response header with the
+dictionary that was used to encode the response.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
+<p id="section-2.4-3">If the HTTP response contains a "Content-Dictionary" response header with the
 hash of a dictionary that the client does not have available then the client
-cannot decode or use the HTTP response.<a href="#section-2.3-3" class="pilcrow">¶</a></p>
-<p id="section-2.3-4">For example:<a href="#section-2.3-4" class="pilcrow">¶</a></p>
-<div class="lang-http-message sourcecode" id="section-2.3-5">
+cannot decode or use the HTTP response.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
+<p id="section-2.4-4">For example:<a href="#section-2.4-4" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2.4-5">
 <pre>
 Content-Dictionary: :pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4=:
-</pre><a href="#section-2.3-5" class="pilcrow">¶</a>
+</pre><a href="#section-2.4-5" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1680,10 +1724,16 @@ Vary: accept-encoding, available-dictionary
                 <a href="#available-dictionary" class="auto internal xref">Section 2.2</a> of this document</td>
             </tr>
             <tr>
+              <td class="text-left" rowspan="1" colspan="1">Dictionary-ID</td>
+              <td class="text-left" rowspan="1" colspan="1">permanent</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#dictionary-id" class="auto internal xref">Section 2.3</a> of this document</td>
+            </tr>
+            <tr>
               <td class="text-left" rowspan="1" colspan="1">Content-Dictionary</td>
               <td class="text-left" rowspan="1" colspan="1">permanent</td>
               <td class="text-left" rowspan="1" colspan="1">
-                <a href="#content-dictionary" class="auto internal xref">Section 2.3</a> of this document</td>
+                <a href="#content-dictionary" class="auto internal xref">Section 2.4</a> of this document</td>
             </tr>
           </tbody>
         </table>
