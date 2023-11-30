@@ -1401,10 +1401,10 @@ HEADERS
 <p id="section-5.2-2">In some cases, it is valuable to allow "connect-tcp" clients to reach "connect-tcp"-only proxies when using a legacy configuration method that cannot convey a URI template.  To support this arrangement, clients <span class="bcp14">SHOULD</span> treat certain errors during classic HTTP CONNECT as indications that the proxy might only support "connect-tcp":<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.1">
-            <p id="section-5.2-3.1.1">In HTTP/1.1: the response status code is 426 "Upgrade Required", with an "Upgrade: connect-tcp" response header.<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-3.1.1">In HTTP/1.1: the response status code is "426 (Upgrade Required)", with an "Upgrade: connect-tcp" response header.<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-3.2">
-            <p id="section-5.2-3.2.1">In any HTTP version: the response status code is 501 "Not Implemented".<a href="#section-5.2-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-3.2.1">In any HTTP version: the response status code is "501 (Not Implemented)".<a href="#section-5.2-3.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.2.2.1">
                 <p id="section-5.2-3.2.2.1.1">Requires SETTINGS_ENABLE_CONNECT_PROTOCOL to have been negotiated in HTTP/2 or HTTP/3.<a href="#section-5.2-3.2.2.1.1" class="pilcrow">¶</a></p>
