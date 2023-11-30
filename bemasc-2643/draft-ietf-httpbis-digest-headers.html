@@ -1,0 +1,3598 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Digest Fields</title>
+<meta content="Roberto Polli" name="author">
+<meta content="Lucas Pardue" name="author">
+<meta content="
+       This document defines HTTP fields that support integrity digests. The
+Content-Digest field can be used for the integrity of HTTP message content. The
+Repr-Digest field can be used for the integrity of HTTP representations.
+Want-Content-Digest and Want-Repr-Digest can be used to indicate a sender's
+interest and preferences for receiving the respective Integrity fields. 
+       This document obsoletes RFC 3230 and the Digest and Want-Digest HTTP
+fields. 
+    " name="description">
+<meta content="xml2rfc 3.18.2" name="generator">
+<meta content="Digest" name="keyword">
+<meta content="draft-ietf-httpbis-digest-headers-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.18.2
+    Python 3.11.6
+    ConfigArgParse 1.5.3
+    google-i18n-address 3.1.0
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.3
+    platformdirs 4.0.0
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.31.0
+    setuptools 67.7.2
+    six 1.16.0
+    wcwidth 0.2.10
+-->
+<link href="draft-ietf-httpbis-digest-headers.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+:is(ol, ul) :is(ol, ul) {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  line-height: 1;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+}
+dl.olPercent {
+  --indent: 5ch;
+}
+dl > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+dl.olPercent > dt {
+  min-width: calc(var(--indent) - 2ch);
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:first-child, .break:first-child + *) {
+  margin-top: 0;
+}
+:is(dl.compact, .dlCompact) > dd > :is(:last-child) {
+  margin-bottom: 0;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    overflow-x: auto;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  min-width: var(--identifier-width);
+  clear: left;
+  float: left;
+  text-align: right;
+  margin-right: 1ch;
+}
+#identifiers dd {
+  margin: 0;
+  margin-left: calc(1em + var(--identifier-width)) !important;
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 2px 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 10ch;
+  margin-right: 1.5ch;
+}
+.references dt:target::before {
+  content: "⇒";
+  width: 15px;
+  margin: 0 10px 0 -25px;
+}
+.references dd {
+  margin-left: 12ch !important;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul :is(p, li) {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+  .toplink {
+    display: none;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">Digest Fields</td>
+<td class="right">November 2023</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Polli &amp; Pardue</td>
+<td class="center">Expires 2 June 2024</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">HTTP</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ietf-httpbis-digest-headers-latest</dd>
+<dt class="label-obsoletes">Obsoletes:</dt>
+<dd class="obsoletes">
+<a href="https://www.rfc-editor.org/rfc/rfc3230" class="eref">3230</a> (if approved)</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2023-11-30" class="published">30 November 2023</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2024-06-02">2 June 2024</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">R. Polli</div>
+<div class="org">Team Digitale, Italian Government</div>
+</div>
+<div class="author">
+      <div class="author-name">L. Pardue</div>
+<div class="org">Cloudflare</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Digest Fields</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines HTTP fields that support integrity digests. The
+Content-Digest field can be used for the integrity of HTTP message content. The
+Repr-Digest field can be used for the integrity of HTTP representations.
+Want-Content-Digest and Want-Repr-Digest can be used to indicate a sender's
+interest and preferences for receiving the respective Integrity fields.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document obsoletes RFC 3230 and the Digest and Want-Digest HTTP
+fields.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-digest-headers/">https://datatracker.ietf.org/doc/draft-ietf-httpbis-digest-headers/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        HTTP Working Group mailing list (<span><a href="mailto:ietf-http-wg@w3.org">mailto:ietf-http-wg@w3.org</a></span>),
+        which is archived at <span><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">https://lists.w3.org/Archives/Public/ietf-http-wg/</a></span>.
+        Working Group information can be found at <span><a href="https://httpwg.org/">https://httpwg.org/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/httpwg/http-extensions/labels/digest-headers">https://github.com/httpwg/http-extensions/labels/digest-headers</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 2 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-document-structure" class="internal xref">Document Structure</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-concept-overview" class="internal xref">Concept Overview</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-obsoleting-rfc-3230" class="internal xref">Obsoleting RFC 3230</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4">
+                <p id="section-toc.1-1.1.2.4.1"><a href="#section-1.4" class="auto internal xref">1.4</a>.  <a href="#name-notational-conventions" class="internal xref">Notational Conventions</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-the-content-digest-field" class="internal xref">The Content-Digest Field</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-the-repr-digest-field" class="internal xref">The Repr-Digest Field</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-using-repr-digest-in-state-" class="internal xref">Using Repr-Digest in State-Changing Requests</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-repr-digest-and-content-loc" class="internal xref">Repr-Digest and Content-Location in Responses</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-integrity-preference-fields" class="internal xref">Integrity preference fields</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-hash-algorithm-consideratio" class="internal xref">Hash Algorithm Considerations and Registration</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-http-messages-are-not-prote" class="internal xref">HTTP Messages Are Not Protected In Full</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-end-to-end-integrity" class="internal xref">End-to-End Integrity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-usage-in-signatures" class="internal xref">Usage in Signatures</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-usage-in-trailer-fields" class="internal xref">Usage in Trailer Fields</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
+                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-variations-within-content-e" class="internal xref">Variations Within Content Encoding</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.6">
+                <p id="section-toc.1-1.6.2.6.1"><a href="#section-6.6" class="auto internal xref">6.6</a>.  <a href="#name-algorithm-agility" class="internal xref">Algorithm Agility</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.7">
+                <p id="section-toc.1-1.6.2.7.1"><a href="#section-6.7" class="auto internal xref">6.7</a>.  <a href="#name-resource-exhaustion" class="internal xref">Resource exhaustion</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-http-field-name-registratio" class="internal xref">HTTP Field Name Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-establish-the-hash-algorith" class="internal xref">Establish the Hash Algorithms for HTTP Digest Fields Registry</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-deprecate-the-hypertext-tra" class="internal xref">Deprecate the Hypertext Transfer Protocol (HTTP) Digest Algorithm Values Registry</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-resource-representation-and" class="internal xref">Resource Representation and Representation Data</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-examples-of-unsolicited-dig" class="internal xref">Examples of Unsolicited Digest</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-server-returns-full-represe" class="internal xref">Server Returns Full Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-server-returns-no-represent" class="internal xref">Server Returns No Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#appendix-B.3" class="auto internal xref">B.3</a>.  <a href="#name-server-returns-partial-repr" class="internal xref">Server Returns Partial Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
+                <p id="section-toc.1-1.10.2.4.1"><a href="#appendix-B.4" class="auto internal xref">B.4</a>.  <a href="#name-client-and-server-provide-f" class="internal xref">Client and Server Provide Full Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5">
+                <p id="section-toc.1-1.10.2.5.1"><a href="#appendix-B.5" class="auto internal xref">B.5</a>.  <a href="#name-client-provides-full-repres" class="internal xref">Client Provides Full Representation Data, Server Provides No Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6">
+                <p id="section-toc.1-1.10.2.6.1"><a href="#appendix-B.6" class="auto internal xref">B.6</a>.  <a href="#name-client-and-server-provide-fu" class="internal xref">Client and Server Provide Full Representation Data</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.7">
+                <p id="section-toc.1-1.10.2.7.1"><a href="#appendix-B.7" class="auto internal xref">B.7</a>.  <a href="#name-post-response-does-not-refe" class="internal xref">POST Response does not Reference the Request URI</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.8">
+                <p id="section-toc.1-1.10.2.8.1"><a href="#appendix-B.8" class="auto internal xref">B.8</a>.  <a href="#name-post-response-describes-the" class="internal xref">POST Response Describes the Request Status</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.9">
+                <p id="section-toc.1-1.10.2.9.1"><a href="#appendix-B.9" class="auto internal xref">B.9</a>.  <a href="#name-digest-with-patch" class="internal xref">Digest with PATCH</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.10">
+                <p id="section-toc.1-1.10.2.10.1"><a href="#appendix-B.10" class="auto internal xref">B.10</a>. <a href="#name-error-responses" class="internal xref">Error responses</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.11">
+                <p id="section-toc.1-1.10.2.11.1"><a href="#appendix-B.11" class="auto internal xref">B.11</a>. <a href="#name-use-with-trailer-fields-and" class="internal xref">Use with Trailer Fields and Transfer Coding</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-examples-of-want-repr-diges" class="internal xref">Examples of Want-Repr-Digest Solicited Digest</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-C.1" class="auto internal xref">C.1</a>.  <a href="#name-server-selects-clients-leas" class="internal xref">Server Selects Client's Least Preferred Algorithm</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#appendix-C.2" class="auto internal xref">C.2</a>.  <a href="#name-server-selects-algorithm-un" class="internal xref">Server Selects Algorithm Unsupported by Client</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#appendix-C.3" class="auto internal xref">C.3</a>.  <a href="#name-server-does-not-support-cli" class="internal xref">Server Does Not Support Client Algorithm and Returns an Error</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-D" class="auto internal xref">Appendix D</a>.  <a href="#name-sample-digest-values" class="internal xref">Sample Digest Values</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-E" class="auto internal xref">Appendix E</a>.  <a href="#name-migrating-from-rfc-3230" class="internal xref">Migrating from RFC 3230</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-F" class="auto internal xref"></a><a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-G" class="auto internal xref"></a><a href="#name-code-samples" class="internal xref">Code Samples</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-H" class="auto internal xref"></a><a href="#name-changes" class="internal xref">Changes</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.1">
+                <p id="section-toc.1-1.16.2.1.1"><a href="#appendix-H.1" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-di" class="internal xref">Since draft-ietf-httpbis-digest-headers-12</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.2">
+                <p id="section-toc.1-1.16.2.2.1"><a href="#appendix-H.2" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-dig" class="internal xref">Since draft-ietf-httpbis-digest-headers-11</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.3">
+                <p id="section-toc.1-1.16.2.3.1"><a href="#appendix-H.3" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-dige" class="internal xref">Since draft-ietf-httpbis-digest-headers-10</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.4">
+                <p id="section-toc.1-1.16.2.4.1"><a href="#appendix-H.4" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-diges" class="internal xref">Since draft-ietf-httpbis-digest-headers-09</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.5">
+                <p id="section-toc.1-1.16.2.5.1"><a href="#appendix-H.5" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest" class="internal xref">Since draft-ietf-httpbis-digest-headers-08</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.6">
+                <p id="section-toc.1-1.16.2.6.1"><a href="#appendix-H.6" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-" class="internal xref">Since draft-ietf-httpbis-digest-headers-07</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.7">
+                <p id="section-toc.1-1.16.2.7.1"><a href="#appendix-H.7" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-h" class="internal xref">Since draft-ietf-httpbis-digest-headers-06</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.8">
+                <p id="section-toc.1-1.16.2.8.1"><a href="#appendix-H.8" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-he" class="internal xref">Since draft-ietf-httpbis-digest-headers-05</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.9">
+                <p id="section-toc.1-1.16.2.9.1"><a href="#appendix-H.9" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-hea" class="internal xref">Since draft-ietf-httpbis-digest-headers-04</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.10">
+                <p id="section-toc.1-1.16.2.10.1"><a href="#appendix-H.10" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-hea-2" class="internal xref">Since draft-ietf-httpbis-digest-headers-03</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.11">
+                <p id="section-toc.1-1.16.2.11.1"><a href="#appendix-H.11" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-hea-3" class="internal xref">Since draft-ietf-httpbis-digest-headers-02</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.12">
+                <p id="section-toc.1-1.16.2.12.1"><a href="#appendix-H.12" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-hea-4" class="internal xref">Since draft-ietf-httpbis-digest-headers-01</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.13">
+                <p id="section-toc.1-1.16.2.13.1"><a href="#appendix-H.13" class="auto internal xref"></a><a href="#name-since-draft-ietf-httpbis-digest-hea-5" class="internal xref">Since draft-ietf-httpbis-digest-headers-00</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
+            <p id="section-toc.1-1.17.1"><a href="#appendix-I" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">HTTP does not define the means to protect the data integrity of content or
+representations. When HTTP messages are transferred between endpoints, lower layer
+features or properties such as TCP checksums or TLS records <span>[<a href="#TLS" class="cite xref">TLS</a>]</span> can provide
+some integrity protection. However, transport-oriented integrity provides a
+limited utility because it is opaque to the application layer and only covers
+the extent of a single connection. HTTP messages often travel over a chain of
+separate connections. In between connections there is a possibility for
+data corruption. An HTTP integrity mechanism can provide
+the means for endpoints, or applications using HTTP, to detect data corruption
+and make a choice about how to act on it. An example use case is to aid
+fault detection and diagnosis across system boundaries.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines two digest integrity mechanisms for HTTP.
+First, content integrity, which acts on conveyed content (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.4" class="relref">Section 6.4</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).
+Second, representation data integrity, which acts on representation data (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.1" class="relref">Section 8.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>). This supports advanced use cases such as validating the
+integrity of a resource that was reconstructed from parts retrieved using
+multiple requests or connections.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document obsoletes RFC 3230 and therefore the Digest and Want-Digest HTTP
+fields; see <a href="#obsolete-3230" class="auto internal xref">Section 1.3</a>.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="document-structure">
+<section id="section-1.1">
+        <h3 id="name-document-structure">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-document-structure" class="section-name selfRef">Document Structure</a>
+        </h3>
+<p id="section-1.1-1">This document is structured as follows:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">
+            <p id="section-1.1-2.1.1">New request and response header and trailer field definitions.<a href="#section-1.1-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1.2.1">
+                <p id="section-1.1-2.1.2.1.1"><a href="#content-digest" class="auto internal xref">Section 2</a> (Content-Digest),<a href="#section-1.1-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.1.2.2">
+                <p id="section-1.1-2.1.2.2.1"><a href="#representation-digest" class="auto internal xref">Section 3</a> (Repr-Digest), and<a href="#section-1.1-2.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.1.2.3">
+                <p id="section-1.1-2.1.2.3.1"><a href="#want-fields" class="auto internal xref">Section 4</a> (Want-Content-Digest and Want-Repr-Digest).<a href="#section-1.1-2.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.2">
+            <p id="section-1.1-2.2.1">Considerations specific to representation data integrity.<a href="#section-1.1-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.2.2.1">
+                <p id="section-1.1-2.2.2.1.1"><a href="#state-changing-requests" class="auto internal xref">Section 3.1</a> (State-changing requests),<a href="#section-1.1-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.2.2.2">
+                <p id="section-1.1-2.2.2.2.1"><a href="#digest-and-content-location" class="auto internal xref">Section 3.2</a> (Content-Location),<a href="#section-1.1-2.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.2.2.3">
+                <p id="section-1.1-2.2.2.3.1"><a href="#resource-representation" class="auto internal xref">Appendix A</a> contains worked examples of Representation data
+in message exchanges, and<a href="#section-1.1-2.2.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.2.2.4">
+                <p id="section-1.1-2.2.2.4.1"><a href="#examples-unsolicited" class="auto internal xref">Appendix B</a> and <a href="#examples-solicited" class="auto internal xref">Appendix C</a> contain worked examples
+of Repr-Digest and Want-Repr-Digest fields in message exchanges.<a href="#section-1.1-2.2.2.4.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.3">
+            <p id="section-1.1-2.3.1"><a href="#algorithms" class="auto internal xref">Section 5</a> presents hash algorithm considerations and defines
+registration procedures for future entries.<a href="#section-1.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="concept-overview">
+<section id="section-1.2">
+        <h3 id="name-concept-overview">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-concept-overview" class="section-name selfRef">Concept Overview</a>
+        </h3>
+<p id="section-1.2-1">The HTTP fields defined in this document can be used for HTTP integrity. Senders
+choose a hashing algorithm and calculate a digest from an input related to the
+HTTP message. The algorithm identifier and digest are transmitted in an HTTP
+field. Receivers can validate the digest for integrity purposes. Hashing
+algorithms are registered in the "Hash Algorithms for HTTP Digest Fields" registry (see
+<a href="#establish-hash-algorithm-registry" class="auto internal xref">Section 7.2</a>).<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">Selecting the data on which digests are calculated depends on the use case of the
+HTTP messages. This document provides different fields for HTTP representation
+data and HTTP content.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">There are use cases where a simple digest of the HTTP content bytes is
+required. The <code>Content-Digest</code> request and response header and trailer field is
+defined to support digests of content (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.4" class="relref">Section 6.4</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>); see
+<a href="#content-digest" class="auto internal xref">Section 2</a>.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">For more advanced use cases, the <code>Repr-Digest</code> request and response header
+and trailer field (<a href="#representation-digest" class="auto internal xref">Section 3</a>) is defined. It contains a digest value
+computed by applying a hashing algorithm to selected representation data
+(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.1" class="relref">Section 8.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>). Basing <code>Repr-Digest</code> on the selected
+representation makes it straightforward to apply it to use cases where the
+message content requires some sort of manipulation to be considered as
+representation of the resource or content conveys a partial representation of a resource,
+such as Range Requests (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-14" class="relref">Section 14</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+<p id="section-1.2-5"><code>Content-Digest</code> and <code>Repr-Digest</code> support hashing algorithm agility.
+The <code>Want-Content-Digest</code> and <code>Want-Repr-Digest</code> fields allow
+endpoints to express interest in <code>Content-Digest</code> and <code>Repr-Digest</code>
+respectively, and to express algorithm preferences in either.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
+<p id="section-1.2-6"><code>Content-Digest</code> and <code>Repr-Digest</code> are collectively termed
+Integrity fields.
+<code>Want-Content-Digest</code> and <code>Want-Repr-Digest</code> are
+collectively termed Integrity preference fields.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+<p id="section-1.2-7">Integrity fields are tied to the <code>Content-Encoding</code>
+and <code>Content-Type</code> header fields. Therefore, a given resource may have multiple
+different digest values when transferred with HTTP.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
+<p id="section-1.2-8">Integrity fields apply to HTTP message content or HTTP representations. They do
+not apply to HTTP messages or fields. However, they can be combined with other
+mechanisms that protect metadata, such as digital signatures, in order to
+protect the phases of an HTTP exchange in whole or in part. For example, HTTP
+Message Signatures <span>[<a href="#SIGNATURES" class="cite xref">SIGNATURES</a>]</span> could be used to sign Integrity fields, thus
+providing coverage for HTTP content or representation data.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
+<p id="section-1.2-9">This specification does not define means for authentication, authorization, or privacy.<a href="#section-1.2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="obsolete-3230">
+<section id="section-1.3">
+        <h3 id="name-obsoleting-rfc-3230">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-obsoleting-rfc-3230" class="section-name selfRef">Obsoleting RFC 3230</a>
+        </h3>
+<p id="section-1.3-1"><span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span> defined the <code>Digest</code> and <code>Want-Digest</code> HTTP fields for HTTP integrity.
+It also coined the term "instance" and "instance manipulation" in order to
+explain concepts that are now more universally defined, and implemented, as HTTP
+semantics such as selected representation data (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.1" class="relref">Section 8.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">Experience has shown that implementations of <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span> have interpreted the
+meaning of "instance" inconsistently, leading to interoperability issues. The
+most common issue relates to the mistake of calculating the digest using (what
+we now call) message content, rather than using (what we now call)
+representation data as was originally intended. Interestingly, time has also
+shown that a digest of message content can be beneficial for some use cases. So
+it is difficult to detect if non-conformance to <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span> is intentional or
+unintentional.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<p id="section-1.3-3">In order to address potential inconsistencies and ambiguity across
+implementations of <code>Digest</code> and <code>Want-Digest</code>, this document obsoletes
+<span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>. The Integrity fields (Sections <a href="#content-digest" class="auto internal xref">2</a> and
+<a href="#representation-digest" class="auto internal xref">3</a>) and Integrity preference fields (<a href="#want-fields" class="auto internal xref">Section 4</a>)
+defined in this document are better aligned with current HTTP semantics and
+have names that more clearly articulate the intended usages.<a href="#section-1.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="notational-conventions">
+<section id="section-1.4">
+        <h3 id="name-notational-conventions">
+<a href="#section-1.4" class="section-number selfRef">1.4. </a><a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
+        </h3>
+<p id="section-1.4-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.4-1" class="pilcrow">¶</a></p>
+<p id="section-1.4-2">This document uses the Augmented BNF defined in <span>[<a href="#RFC5234" class="cite xref">RFC5234</a>]</span> and updated by
+<span>[<a href="#RFC7405" class="cite xref">RFC7405</a>]</span>. This includes the rules: CR (carriage
+return), LF (line feed), and CRLF (CR LF).<a href="#section-1.4-2" class="pilcrow">¶</a></p>
+<p id="section-1.4-3">This document uses the following terminology from <span><a href="https://rfc-editor.org/rfc/rfc8941#section-3" class="relref">Section 3</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span> to specify syntax and parsing:
+Boolean, Byte Sequence, Dictionary, Integer, and List.<a href="#section-1.4-3" class="pilcrow">¶</a></p>
+<p id="section-1.4-4">The definitions "representation", "selected representation", "representation
+data", "representation metadata", "user agent", and "content" in this document are to be
+interpreted as described in <span>[<a href="#RFC9110" class="cite xref">HTTP</a>]</span>.<a href="#section-1.4-4" class="pilcrow">¶</a></p>
+<p id="section-1.4-5">This document uses the line folding strategies
+described in <span>[<a href="#FOLDING" class="cite xref">FOLDING</a>]</span>.<a href="#section-1.4-5" class="pilcrow">¶</a></p>
+<p id="section-1.4-6">Hashing algorithm names respect the casing used in their definition document (e.g., SHA-1, CRC32c).<a href="#section-1.4-6" class="pilcrow">¶</a></p>
+<p id="section-1.4-7">HTTP messages indicate hashing algorithms using an Algorithm Key (<span class="contact-name">algorithms</span>).
+Where the document refers to an Algorithm Key in prose, it is quoted (e.g., "sha", "crc32c").<a href="#section-1.4-7" class="pilcrow">¶</a></p>
+<p id="section-1.4-8">The term "checksum" describes the output of the application of an algorithm
+to a sequence of bytes,
+whereas "digest" is only used in relation to the value contained in the fields.<a href="#section-1.4-8" class="pilcrow">¶</a></p>
+<p id="section-1.4-9">Integrity fields: collective term for <code>Content-Digest</code> and <code>Repr-Digest</code><a href="#section-1.4-9" class="pilcrow">¶</a></p>
+<p id="section-1.4-10">Integrity preference fields: collective term for <code>Want-Repr-Digest</code> and <code>Want-Content-Digest</code><a href="#section-1.4-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="content-digest">
+<section id="section-2">
+      <h2 id="name-the-content-digest-field">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-the-content-digest-field" class="section-name selfRef">The Content-Digest Field</a>
+      </h2>
+<p id="section-2-1">The <code>Content-Digest</code> HTTP field can be used in requests and responses to
+communicate digests that are calculated using a hashing algorithm applied to
+the actual message content (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.4" class="relref">Section 6.4</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>). It is a
+<code>Dictionary</code> (see <span><a href="https://rfc-editor.org/rfc/rfc8941#section-3.2" class="relref">Section 3.2</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>)
+where each:<a href="#section-2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2-2.1">
+          <p id="section-2-2.1.1">key conveys the hashing algorithm (see <a href="#algorithms" class="auto internal xref">Section 5</a>)
+used to compute the digest;<a href="#section-2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-2.2">
+          <p id="section-2-2.2.1">value is a <code>Byte Sequence</code> (<span><a href="https://rfc-editor.org/rfc/rfc8941#section-3.3.5" class="relref">Section 3.3.5</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>), that
+conveys an encoded version of the byte output produced by the digest
+calculation.<a href="#section-2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-2-3">For example:<a href="#section-2-3" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2-4">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</pre><a href="#section-2-4" class="pilcrow">¶</a>
+</div>
+<p id="section-2-5">The <code>Dictionary</code> type can be used, for example, to attach multiple digests
+calculated using different hashing algorithms in order to support a population
+of endpoints with different or evolving capabilities. Such an approach could
+support transitions away from weaker algorithms (see <a href="#sec-agility" class="auto internal xref">Section 6.6</a>).<a href="#section-2-5" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-2-6">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</pre><a href="#section-2-6" class="pilcrow">¶</a>
+</div>
+<p id="section-2-7">A recipient <span class="bcp14">MAY</span> ignore any or all digests. Application-specific behavior or
+local policy <span class="bcp14">MAY</span> set additional constraints on the processing and validation
+practices of the conveyed digests.
+The security considerations covers some of the issues related to
+ignoring digests (see <a href="#sec-agility" class="auto internal xref">Section 6.6</a>)
+and validating multiple digests (see <a href="#sec-exhaustion" class="auto internal xref">Section 6.7</a>).<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8">A sender <span class="bcp14">MAY</span> send a digest without
+knowing whether the recipient supports a given hashing algorithm, or even knowing
+that the recipient will ignore it.<a href="#section-2-8" class="pilcrow">¶</a></p>
+<p id="section-2-9"><code>Content-Digest</code> can be sent in a trailer section.
+In this case,
+<code>Content-Digest</code> <span class="bcp14">MAY</span> be merged into the header section; see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.5.1" class="relref">Section 6.5.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>.<a href="#section-2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="representation-digest">
+<section id="section-3">
+      <h2 id="name-the-repr-digest-field">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-the-repr-digest-field" class="section-name selfRef">The Repr-Digest Field</a>
+      </h2>
+<p id="section-3-1">The <code>Repr-Digest</code> HTTP field can be used in requests and responses to
+communicate digests that are calculated using a hashing algorithm applied to
+the entire selected representation data (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.1" class="relref">Section 8.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Representations take into account the effect of the HTTP semantics on
+messages. For example, the content can be affected by Range Requests or methods
+such as HEAD, while the way the content is transferred "on the wire" is
+dependent on other transformations (e.g., transfer codings for HTTP/1.1 - see
+<span><a href="https://rfc-editor.org/rfc/rfc9112#section-6.1" class="relref">Section 6.1</a> of [<a href="#RFC9112" class="cite xref">HTTP/1.1</a>]</span>). To help illustrate HTTP representation concepts,
+several examples are provided in <a href="#resource-representation" class="auto internal xref">Appendix A</a>.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">When a message has no representation data it is still possible to assert that no
+representation data was sent by computing the digest on an empty
+string (see <a href="#usage-in-signatures" class="auto internal xref">Section 6.3</a>).<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4"><code>Repr-Digest</code> is a <code>Dictionary</code> (see <span><a href="https://rfc-editor.org/rfc/rfc8941#section-3.2" class="relref">Section 3.2</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>) where each:<a href="#section-3-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-5.1">
+          <p id="section-3-5.1.1">key conveys the hashing algorithm (see <a href="#algorithms" class="auto internal xref">Section 5</a>)
+used to compute the digest;<a href="#section-3-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-5.2">
+          <p id="section-3-5.2.1">value is a <code>Byte Sequence</code>, that conveys an encoded version of the byte
+output produced by the digest calculation.<a href="#section-3-5.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-3-6">For example:<a href="#section-3-6" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-3-7">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</pre><a href="#section-3-7" class="pilcrow">¶</a>
+</div>
+<p id="section-3-8">The <code>Dictionary</code> type can be used, for example, to attach multiple digests
+calculated using different hashing algorithms in order to support a population
+of endpoints with different or evolving capabilities. Such an approach could
+support transitions away from weaker algorithms (see <a href="#sec-agility" class="auto internal xref">Section 6.6</a>).<a href="#section-3-8" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-3-9">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</pre><a href="#section-3-9" class="pilcrow">¶</a>
+</div>
+<p id="section-3-10">A recipient <span class="bcp14">MAY</span> ignore any or all digests. Application-specific behavior or
+local policy <span class="bcp14">MAY</span> set additional constraints on the processing and validation
+practices of the conveyed digests.
+The security considerations covers some of the issues related to
+ignoring digests (see <a href="#sec-agility" class="auto internal xref">Section 6.6</a>)
+and validating multiple digests (see <a href="#sec-exhaustion" class="auto internal xref">Section 6.7</a>).<a href="#section-3-10" class="pilcrow">¶</a></p>
+<p id="section-3-11">A sender <span class="bcp14">MAY</span> send a digest without knowing whether the
+recipient supports a given hashing algorithm, or even knowing that the recipient
+will ignore it.<a href="#section-3-11" class="pilcrow">¶</a></p>
+<p id="section-3-12"><code>Repr-Digest</code> can be sent in a trailer section.
+In this case,
+<code>Repr-Digest</code> <span class="bcp14">MAY</span> be merged into the header section; see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.5.1" class="relref">Section 6.5.1</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>.<a href="#section-3-12" class="pilcrow">¶</a></p>
+<div id="state-changing-requests">
+<section id="section-3.1">
+        <h3 id="name-using-repr-digest-in-state-">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-using-repr-digest-in-state-" class="section-name selfRef">Using Repr-Digest in State-Changing Requests</a>
+        </h3>
+<p id="section-3.1-1">When the representation enclosed in a state-changing request
+does not describe the target resource,
+the representation digest <span class="bcp14">MUST</span> be computed on the
+representation data.
+This is the only possible choice because representation digest requires complete
+representation metadata (see <a href="#representation-digest" class="auto internal xref">Section 3</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">In responses,<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-3.1">
+            <p id="section-3.1-3.1.1">if the representation describes the status of the request,
+<code>Repr-Digest</code> <span class="bcp14">MUST</span> be computed on the enclosed representation
+ (see <a href="#post-referencing-status" class="auto internal xref">Appendix B.8</a>);<a href="#section-3.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-3.2">
+            <p id="section-3.1-3.2.1">if there is a referenced resource
+<code>Repr-Digest</code> <span class="bcp14">MUST</span> be computed on the selected representation of the referenced resource
+ even if that is different from the target resource.
+ That might or might not result in computing <code>Repr-Digest</code> on the enclosed representation.<a href="#section-3.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.1-4">The latter case is done according to the HTTP semantics of the given
+method, for example using the <code>Content-Location</code> header field (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.7" class="relref">Section 8.7</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).
+In contrast, the <code>Location</code> header field does not affect <code>Repr-Digest</code> because
+it is not representation metadata.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">For example, in <code>PATCH</code> requests, the representation digest
+will be computed on the patch document
+because the representation metadata refers to the patch document and not
+to the target resource (see <span><a href="https://rfc-editor.org/rfc/rfc5789#section-2" class="relref">Section 2</a> of [<a href="#PATCH" class="cite xref">PATCH</a>]</span>).
+In responses, instead, the representation digest will be computed on the selected
+representation of the patched resource.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="digest-and-content-location">
+<section id="section-3.2">
+        <h3 id="name-repr-digest-and-content-loc">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-repr-digest-and-content-loc" class="section-name selfRef">Repr-Digest and Content-Location in Responses</a>
+        </h3>
+<p id="section-3.2-1">When a state-changing method returns the <code>Content-Location</code> header field, the
+enclosed representation refers to the resource identified by its value and
+<code>Repr-Digest</code> is computed accordingly.
+An example is given in <a href="#post-not-request-uri" class="auto internal xref">Appendix B.7</a>.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="want-fields">
+<section id="section-4">
+      <h2 id="name-integrity-preference-fields">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-integrity-preference-fields" class="section-name selfRef">Integrity preference fields</a>
+      </h2>
+<p id="section-4-1">Senders can indicate their interest in Integrity fields and hashing algorithm
+preferences using the
+<code>Want-Content-Digest</code> or <code>Want-Repr-Digest</code> fields. These can be used in both
+requests and responses.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2"><code>Want-Content-Digest</code> indicates that the sender would like to receive a content digest
+on messages associated with the request URI and representation metadata, using
+the <code>Content-Digest</code> field.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3"><code>Want-Repr-Digest</code> indicates that the sender would like to receive a representation digest
+on messages associated with the request URI and representation metadata, using
+the <code>Repr-Digest</code> field.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">If <code>Want-Content-Digest</code> or <code>Want-Repr-Digest</code> are used in a response, it
+indicates that the server would like the client to provide the respective
+Integrity field on future requests.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">Integrity preference fields are only a hint. The receiver of the field can
+ignore it and send an Integrity field using any algorithm or omit the field
+entirely, for example see <a href="#ex-server-selects-unsupported-algorithm" class="auto internal xref">Appendix C.2</a>. It is not
+a protocol error if preferences are ignored. Applications that use Integrity
+fields and Integrity preferences can define expectations or constraints that
+operate in addition to this specification. Ignored preferences are an
+application-specific concern.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6"><code>Want-Content-Digest</code> and <code>Want-Repr-Digest</code> are of type <code>Dictionary</code>
+where each:<a href="#section-4-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4-7.1">
+          <p id="section-4-7.1.1">key conveys the hashing algorithm (see <a href="#algorithms" class="auto internal xref">Section 5</a>);<a href="#section-4-7.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-7.2">
+          <p id="section-4-7.2.1">value is an <code>Integer</code> (<span><a href="https://rfc-editor.org/rfc/rfc8941#section-3.3.1" class="relref">Section 3.3.1</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>)
+that conveys an ascending, relative, weighted preference.
+It must be in the range 0 to 10 inclusive.
+1 is the least preferred, 10 is the most preferred,
+and a value of 0 means "not acceptable".<a href="#section-4-7.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-4-8">Examples:<a href="#section-4-8" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-4-9">
+<pre>
+Want-Repr-Digest: sha-256=1
+Want-Repr-Digest: sha-512=3, sha-256=10, unixsum=0
+Want-Content-Digest: sha-256=1
+Want-Content-Digest: sha-512=3, sha-256=10, unixsum=0
+</pre><a href="#section-4-9" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="algorithms">
+<section id="section-5">
+      <h2 id="name-hash-algorithm-consideratio">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-hash-algorithm-consideratio" class="section-name selfRef">Hash Algorithm Considerations and Registration</a>
+      </h2>
+<p id="section-5-1">There are a wide variety of hashing algorithms that can be used for the purposes
+of integrity. The choice of algorithm depends on several factors such as the
+integrity use case, implementation needs or constraints, or application design
+and workflows.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">An initial set of algorithms will be registered with IANA in the "Hash
+Algorithms for HTTP Digest Fields" registry; see
+<a href="#establish-hash-algorithm-registry" class="auto internal xref">Section 7.2</a>. Additional algorithms can be registered
+in accordance with the policies set out in this section.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">Each algorithm has a status field, which is intended to provide an aid to
+implementation selection.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">Algorithms with a status value of "Active" are suitable for many purposes and
+it is <span class="bcp14">RECOMMENDED</span> that applications use these algorithms. These can be used in
+adversarial situations where hash functions might need to provide resistance to
+collision, first-preimage and second-preimage attacks. For adversarial
+situations, selecting which of the "Active" algorithms are acceptable will
+depend on the level of protection the circumstances demand.
+More considerations are presented in <a href="#sec-agility" class="auto internal xref">Section 6.6</a>.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">Algorithms with a status value of "Deprecated" either provide none of these
+properties, or are known to be weak (see <span>[<a href="#NO-MD5" class="cite xref">NO-MD5</a>]</span> and <span>[<a href="#NO-SHA" class="cite xref">NO-SHA</a>]</span>). These
+algorithms <span class="bcp14">MAY</span> be used to preserve integrity against corruption, but <span class="bcp14">MUST NOT</span> be
+used in a potentially adversarial setting; for example, when signing Integrity
+fields' values for authenticity. Permitting the use of these algorithms can help
+some applications, for example, those that previously used <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>, are
+migrating to this specification (<a href="#migrating" class="auto internal xref">Appendix E</a>), and have existing stored
+collections of computed digest values avoid undue operational overhead caused by
+recomputation using other more-secure algorithms. Such applications are not
+exempt from the requirements in this section. Furthermore, applications without
+such legacy or history ought to follow the guidance for using algorithms with
+the status value "Active".<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">Discussion of algorithm agility is presented in <a href="#sec-agility" class="auto internal xref">Section 6.6</a>.<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-7">Registration requests for the "Hash Algorithms for HTTP Digest Fields" registry
+use the Specification Required policy (<span><a href="https://rfc-editor.org/rfc/rfc8126#section-4.6" class="relref">Section 4.6</a> of [<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>). Requests
+should use the following template:<a href="#section-5-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-8.1">
+          <p id="section-5-8.1.1">Algorithm Key: the Structured Fields key value used in
+<code>Content-Digest</code>, <code>Repr-Digest</code>, <code>Want-Content-Digest</code>, or <code>Want-Repr-Digest</code>
+ field Dictionary member keys<a href="#section-5-8.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-8.2">
+          <p id="section-5-8.2.1">Status: the status of the algorithm. The options are:<a href="#section-5-8.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-8.2.2.1">
+              <p id="section-5-8.2.2.1.1">"Active" - for algorithms without known problems,<a href="#section-5-8.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5-8.2.2.2">
+              <p id="section-5-8.2.2.2.1">"Provisional" - for unproven algorithms,<a href="#section-5-8.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5-8.2.2.3">
+              <p id="section-5-8.2.2.3.1">"Deprecated" - for deprecated or insecure algorithms,<a href="#section-5-8.2.2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+        <li class="normal" id="section-5-8.3">
+          <p id="section-5-8.3.1">Description: a short description of the algorithm<a href="#section-5-8.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-8.4">
+          <p id="section-5-8.4.1">Reference(s): pointer(s) to the primary document(s) defining the Algorithm
+Key and technical details of the algorithm<a href="#section-5-8.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-5-9">When reviewing registration requests, the designated expert(s) should pay
+attention to the requested status. The status value should reflect
+standardization status and the broad opinion of relevant interest groups such as
+the IETF or security-related SDOs. The "Active" status is not suitable for an
+algorithm that is known to be weak, broken, or experimental. If a registration
+request attempts to register such an algorithm as "Active", the designated
+expert(s) should suggest an alternative status of "Deprecated" or "Provisional".<a href="#section-5-9" class="pilcrow">¶</a></p>
+<p id="section-5-10">When reviewing registration requests, the designated expert(s) cannot use a
+status of "Deprecated" or "Provisional" as grounds for rejection.<a href="#section-5-10" class="pilcrow">¶</a></p>
+<p id="section-5-11">Requests to update or change the fields in an existing registration are
+permitted. For example, this could allow for the transition of an algorithm
+status from "Active" to "Deprecated" as the security environment evolves.<a href="#section-5-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security">
+<section id="section-6">
+      <h2 id="name-security-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<div id="sec-limitations">
+<section id="section-6.1">
+        <h3 id="name-http-messages-are-not-prote">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-http-messages-are-not-prote" class="section-name selfRef">HTTP Messages Are Not Protected In Full</a>
+        </h3>
+<p id="section-6.1-1">This document specifies a data integrity mechanism that protects HTTP
+representation data or content, but not HTTP header and trailer fields, from
+certain kinds of corruption.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">Integrity fields are not intended to be a general protection against malicious tampering with
+HTTP messages.
+In the absence of additional security mechanisms,
+an on-path, malicious actor can remove or recalculate and substitute a digest
+value.
+This attack can be mitigated by combining mechanisms described in this
+document with other approaches such
+as transport-layer security or digital signatures (for example, HTTP Message
+Signatures <span>[<a href="#SIGNATURES" class="cite xref">SIGNATURES</a>]</span>).<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="end-to-end-integrity">
+<section id="section-6.2">
+        <h3 id="name-end-to-end-integrity">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-end-to-end-integrity" class="section-name selfRef">End-to-End Integrity</a>
+        </h3>
+<p id="section-6.2-1">Integrity fields can help detect representation data or content modification due to implementation errors,
+undesired "transforming proxies" (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-7.7" class="relref">Section 7.7</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>)
+or other actions as the data passes across multiple hops or system boundaries.
+Even a simple mechanism for end-to-end representation data integrity is valuable
+because a user agent can validate that resource retrieval succeeded before handing off to an
+HTML parser, video player, etc. for parsing.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">Note that using these mechanisms alone does not provide end-to-end integrity of HTTP messages over
+multiple hops, since metadata could be manipulated at any stage. Methods to protect
+metadata are discussed in <a href="#usage-in-signatures" class="auto internal xref">Section 6.3</a>.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="usage-in-signatures">
+<section id="section-6.3">
+        <h3 id="name-usage-in-signatures">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-usage-in-signatures" class="section-name selfRef">Usage in Signatures</a>
+        </h3>
+<p id="section-6.3-1">Digital signatures are widely used together with checksums to provide the
+certain identification of the origin of a message <span>[<a href="#NIST800-32" class="cite xref">NIST800-32</a>]</span>. Such signatures
+can protect one or more HTTP fields and there are additional considerations when
+Integrity fields are included in this set.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">There are no restrictions placed on the type or format of digital signature that
+Integrity fields can be used with. One possible approach is to combine them with
+HTTP Message Signatures <span>[<a href="#SIGNATURES" class="cite xref">SIGNATURES</a>]</span>.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">Digests explicitly
+depend on the "representation metadata" (e.g., the values of <code>Content-Type</code>,
+<code>Content-Encoding</code> etc.). A signature that protects Integrity fields but not other
+"representation metadata" can expose the communication to tampering. For
+example, an actor could manipulate the <code>Content-Type</code> field-value and cause a
+digest validation failure at the recipient, preventing the application from
+accessing the representation. Such an attack consumes the resources of both
+endpoints. See also <a href="#digest-and-content-location" class="auto internal xref">Section 3.2</a>.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-4">Signatures are likely to be deemed an adversarial setting when applying
+Integrity fields; see <a href="#algorithms" class="auto internal xref">Section 5</a>. <code>Repr-Digest</code> offers an interesting
+possibility when combined with signatures. In the scenario where there is no
+content to send, the digest of an empty string can be included in the message
+and, if signed, can help the recipient detect if content was added either as a
+result of accident or purposeful manipulation. The opposite scenario is also
+supported; including an Integrity field for content, and signing it, can help a
+recipient detect where the content was removed.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
+<p id="section-6.3-5">Any mangling of Integrity fields, including digests' de-duplication
+or combining different field values (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>)
+might affect signature validation.<a href="#section-6.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="usage-in-trailer-fields">
+<section id="section-6.4">
+        <h3 id="name-usage-in-trailer-fields">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-usage-in-trailer-fields" class="section-name selfRef">Usage in Trailer Fields</a>
+        </h3>
+<p id="section-6.4-1">Before sending Integrity fields in a trailer section, the sender
+should consider that intermediaries are explicitly allowed to drop any trailer
+(see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.5.2" class="relref">Section 6.5.2</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>).<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.4-2">When Integrity fields are used in a trailer section, the field-values are received after the content.
+Eager processing of content before the trailer section prevents digest validation, possibly leading to
+processing of invalid data.<a href="#section-6.4-2" class="pilcrow">¶</a></p>
+<p id="section-6.4-3">One of the benefits of using Integrity fields in a trailer section is that it
+allows hashing of bytes as they are sent. However, it is possible to
+design a hashing algorithm that requires processing of content in such a way
+that would negate these benefits. For example, Merkle Integrity Content Encoding
+<span>[<a href="#I-D.thomson-http-mice" class="cite xref">I-D.thomson-http-mice</a>]</span> requires content to be processed in reverse order.
+This means the complete data needs to be available, which means there is
+negligible processing difference in sending an Integrity field in a header or
+trailer section.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="variations-within-content-encoding">
+<section id="section-6.5">
+        <h3 id="name-variations-within-content-e">
+<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-variations-within-content-e" class="section-name selfRef">Variations Within Content Encoding</a>
+        </h3>
+<p id="section-6.5-1">Content coding mechanisms can support different encoding parameters, meaning that the same input content can produce different outputs. For example, GZIP supports multiple compression levels. Such encoding parameters are generally not communicated as representation metadata. For instance, different compression levels would all use the same "Content-Encoding: gzip" field. Other examples include where encoding relies on nonces or timestamps, such as the aes128gcm content coding defined in <span>[<a href="#RFC8188" class="cite xref">RFC8188</a>]</span>.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
+<p id="section-6.5-2">Since it is possible for there to be variation within content coding, the checksum conveyed by the integrity fields cannot be used to provide a proof of integrity "at rest"
+unless the whole content is persisted.<a href="#section-6.5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-agility">
+<section id="section-6.6">
+        <h3 id="name-algorithm-agility">
+<a href="#section-6.6" class="section-number selfRef">6.6. </a><a href="#name-algorithm-agility" class="section-name selfRef">Algorithm Agility</a>
+        </h3>
+<p id="section-6.6-1">The security properties of hashing algorithms are not fixed.
+Algorithm Agility (see <span>[<a href="#RFC7696" class="cite xref">RFC7696</a>]</span>) is achieved by providing implementations with flexibility
+to choose hashing algorithms from the IANA Hash Algorithms for HTTP Digest Fields registry; see
+<a href="#establish-hash-algorithm-registry" class="auto internal xref">Section 7.2</a>.<a href="#section-6.6-1" class="pilcrow">¶</a></p>
+<p id="section-6.6-2">Transition from weak algorithms is supported
+by negotiation of hashing algorithm using <code>Want-Content-Digest</code> or <code>Want-Repr-Digest</code> (see <a href="#want-fields" class="auto internal xref">Section 4</a>)
+or by sending multiple digests from which the receiver chooses.
+A receiver that depends on a digest for security will be vulnerable
+to attacks on the weakest algorithm it is willing to accept.
+Endpoints are advised that sending multiple values consumes resources,
+which may be wasted if the receiver ignores them (see <a href="#representation-digest" class="auto internal xref">Section 3</a>).<a href="#section-6.6-2" class="pilcrow">¶</a></p>
+<p id="section-6.6-3">While algorithm agility allows the migration to stronger algorithms
+it does not prevent the use of weaker algorithms.
+Integrity fields do not provide any mitigations for downgrade or substitution
+attacks (see Section 1 of <span>[<a href="#RFC6211" class="cite xref">RFC6211</a>]</span>) of the hashing algorithm.
+To protect against such attacks, endpoints could restrict their set of supported algorithms
+to stronger ones and protect the fields value by using TLS and/or digital signatures.<a href="#section-6.6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-exhaustion">
+<section id="section-6.7">
+        <h3 id="name-resource-exhaustion">
+<a href="#section-6.7" class="section-number selfRef">6.7. </a><a href="#name-resource-exhaustion" class="section-name selfRef">Resource exhaustion</a>
+        </h3>
+<p id="section-6.7-1">Integrity fields validation consumes computational resources.
+In order to avoid resource exhaustion, implementations can restrict
+validation of the algorithm types, number of validations, or the size of content.
+In these cases, skipping validation entirely or ignoring validation failure of a more-preferred algorithm
+leaves the possibility of a downgrade attack (see <a href="#sec-agility" class="auto internal xref">Section 6.6</a>).<a href="#section-6.7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-7">
+      <h2 id="name-iana-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="http-field-name-registration">
+<section id="section-7.1">
+        <h3 id="name-http-field-name-registratio">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-http-field-name-registratio" class="section-name selfRef">HTTP Field Name Registration</a>
+        </h3>
+<p id="section-7.1-1">IANA is asked to update the
+"Hypertext Transfer Protocol (HTTP) Field Name Registry" registry
+(<span>[<a href="#RFC9110" class="cite xref">HTTP</a>]</span>) according to the table below:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Field Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Status</th>
+              <th class="text-left" rowspan="1" colspan="1">Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Content-Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">permanent</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#content-digest" class="auto internal xref">Section 2</a> of this document</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Repr-Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">permanent</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#representation-digest" class="auto internal xref">Section 3</a> of this document</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Want-Content-Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">permanent</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#want-fields" class="auto internal xref">Section 4</a> of this document</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Want-Repr-Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">permanent</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#want-fields" class="auto internal xref">Section 4</a> of this document</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">obsoleted</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>, <a href="#obsolete-3230" class="auto internal xref">Section 1.3</a> of this document</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Want-Digest</td>
+              <td class="text-left" rowspan="1" colspan="1">obsoleted</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>, <a href="#obsolete-3230" class="auto internal xref">Section 1.3</a> of this document</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="establish-hash-algorithm-registry">
+<section id="section-7.2">
+        <h3 id="name-establish-the-hash-algorith">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-establish-the-hash-algorith" class="section-name selfRef">Establish the Hash Algorithms for HTTP Digest Fields Registry</a>
+        </h3>
+<p id="section-7.2-1">IANA is requested to create the new "Hash Algorithms for HTTP Digest Fields"
+registry at <a href="https://www.iana.org/assignments/http-digest-hash-alg/">https://www.iana.org/assignments/http-digest-hash-alg/</a> and
+populate it with the entries in <a href="#iana-hash-algorithm-table" class="auto internal xref">Table 2</a>. The procedure for
+new registrations is provided in <a href="#algorithms" class="auto internal xref">Section 5</a>.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<span id="name-initial-hash-algorithms"></span><div id="iana-hash-algorithm-table">
+<table class="center" id="table-2">
+          <caption>
+<a href="#table-2" class="selfRef">Table 2</a>:
+<a href="#name-initial-hash-algorithms" class="selfRef">Initial Hash Algorithms</a>
+          </caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Algorithm Key</th>
+              <th class="text-left" rowspan="1" colspan="1">Status</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
+              <th class="text-left" rowspan="1" colspan="1">Reference(s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">sha-512</td>
+              <td class="text-left" rowspan="1" colspan="1">Active</td>
+              <td class="text-left" rowspan="1" colspan="1">The SHA-512 algorithm.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span>, <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">sha-256</td>
+              <td class="text-left" rowspan="1" colspan="1">Active</td>
+              <td class="text-left" rowspan="1" colspan="1">The SHA-256 algorithm.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span>, <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">md5</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The MD5 algorithm. It is vulnerable to collision attacks; see <span>[<a href="#NO-MD5" class="cite xref">NO-MD5</a>]</span> and <span>[<a href="#CMU-836068" class="cite xref">CMU-836068</a>]</span>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC1321" class="cite xref">RFC1321</a>]</span>, <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">sha</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The SHA-1 algorithm. It is vulnerable to collision attacks; see <span>[<a href="#NO-SHA" class="cite xref">NO-SHA</a>]</span> and <span>[<a href="#IACR-2020-014" class="cite xref">IACR-2020-014</a>]</span>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC3174" class="cite xref">RFC3174</a>]</span>, <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span> this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">unixsum</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The algorithm used by the UNIX "sum" command.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span>, <span>[<a href="#UNIX" class="cite xref">UNIX</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">unixcksum</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The algorithm used by the UNIX "cksum" command.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC4648" class="cite xref">RFC4648</a>]</span>, <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span>, <span>[<a href="#UNIX" class="cite xref">UNIX</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">adler</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The ADLER32 algorithm.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC1950" class="cite xref">RFC1950</a>]</span>, this document.</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">crc32c</td>
+              <td class="text-left" rowspan="1" colspan="1">Deprecated</td>
+              <td class="text-left" rowspan="1" colspan="1">The CRC32c algorithm.</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span> appendix A, this document.</td>
+            </tr>
+          </tbody>
+        </table>
+</div>
+</section>
+</div>
+<div id="deprecate-the-hypertext-transfer-protocol-http-digest-algorithm-values-registry">
+<section id="section-7.3">
+        <h3 id="name-deprecate-the-hypertext-tra">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-deprecate-the-hypertext-tra" class="section-name selfRef">Deprecate the Hypertext Transfer Protocol (HTTP) Digest Algorithm Values Registry</a>
+        </h3>
+<p id="section-7.3-1">IANA is requested to deprecate the "Hypertext Transfer Protocol (HTTP) Digest
+Algorithm Values" registry at
+<a href="https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xhtml">https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xhtml</a> and replace the note on this registry with the following text:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-7.3-2.1">
+            <p id="section-7.3-2.1.1">"This registry is deprecated since it lists the algorithms that can be used
+with the Digest and Want-Digest fields defined in
+<span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>, which has been obsoleted by
+[rfc-to-be-this-document]. While registration is not closed, new registrations
+are encouraged to use the [Hash Algorithms for HTTP Digest
+Fields]<a href="https://www.iana.org/assignments/http-digest-hash-alg/">https://www.iana.org/assignments/http-digest-hash-alg/</a> registry
+instead."<a href="#section-7.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<section id="section-8">
+      <h2 id="name-references">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-8.1">
+        <h3 id="name-normative-references">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="FOLDING">[FOLDING]</dt>
+        <dd>
+<span class="refAuthor">Watsen, K.</span>, <span class="refAuthor">Auerswald, E.</span>, <span class="refAuthor">Farrel, A.</span>, and <span class="refAuthor">Q. Wu</span>, <span class="refTitle">"Handling Long Lines in Content of Internet-Drafts and RFCs"</span>, <span class="seriesInfo">RFC 8792</span>, <span class="seriesInfo">DOI 10.17487/RFC8792</span>, <time datetime="2020-06" class="refDate">June 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8792">https://www.rfc-editor.org/rfc/rfc8792</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9110">[HTTP]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1321">[RFC1321]</dt>
+        <dd>
+<span class="refAuthor">Rivest, R.</span>, <span class="refTitle">"The MD5 Message-Digest Algorithm"</span>, <span class="seriesInfo">RFC 1321</span>, <span class="seriesInfo">DOI 10.17487/RFC1321</span>, <time datetime="1992-04" class="refDate">April 1992</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1321">https://www.rfc-editor.org/rfc/rfc1321</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1950">[RFC1950]</dt>
+        <dd>
+<span class="refAuthor">Deutsch, P.</span> and <span class="refAuthor">J. Gailly</span>, <span class="refTitle">"ZLIB Compressed Data Format Specification version 3.3"</span>, <span class="seriesInfo">RFC 1950</span>, <span class="seriesInfo">DOI 10.17487/RFC1950</span>, <time datetime="1996-05" class="refDate">May 1996</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1950">https://www.rfc-editor.org/rfc/rfc1950</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3174">[RFC3174]</dt>
+        <dd>
+<span class="refAuthor">Eastlake 3rd, D.</span> and <span class="refAuthor">P. Jones</span>, <span class="refTitle">"US Secure Hash Algorithm 1 (SHA1)"</span>, <span class="seriesInfo">RFC 3174</span>, <span class="seriesInfo">DOI 10.17487/RFC3174</span>, <time datetime="2001-09" class="refDate">September 2001</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3174">https://www.rfc-editor.org/rfc/rfc3174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4648">[RFC4648]</dt>
+        <dd>
+<span class="refAuthor">Josefsson, S.</span>, <span class="refTitle">"The Base16, Base32, and Base64 Data Encodings"</span>, <span class="seriesInfo">RFC 4648</span>, <span class="seriesInfo">DOI 10.17487/RFC4648</span>, <time datetime="2006-10" class="refDate">October 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5234">[RFC5234]</dt>
+        <dd>
+<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6234">[RFC6234]</dt>
+        <dd>
+<span class="refAuthor">Eastlake 3rd, D.</span> and <span class="refAuthor">T. Hansen</span>, <span class="refTitle">"US Secure Hash Algorithms (SHA and SHA-based HMAC and HKDF)"</span>, <span class="seriesInfo">RFC 6234</span>, <span class="seriesInfo">DOI 10.17487/RFC6234</span>, <time datetime="2011-05" class="refDate">May 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6234">https://www.rfc-editor.org/rfc/rfc6234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7405">[RFC7405]</dt>
+        <dd>
+<span class="refAuthor">Kyzivat, P.</span>, <span class="refTitle">"Case-Sensitive String Support in ABNF"</span>, <span class="seriesInfo">RFC 7405</span>, <span class="seriesInfo">DOI 10.17487/RFC7405</span>, <time datetime="2014-12" class="refDate">December 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7405">https://www.rfc-editor.org/rfc/rfc7405</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8126">[RFC8126]</dt>
+        <dd>
+<span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="STRUCTURED-FIELDS">[STRUCTURED-FIELDS]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 8941</span>, <span class="seriesInfo">DOI 10.17487/RFC8941</span>, <time datetime="2021-02" class="refDate">February 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8941">https://www.rfc-editor.org/rfc/rfc8941</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-8.2">
+        <h3 id="name-informative-references">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="CMU-836068">[CMU-836068]</dt>
+        <dd>
+<span class="refAuthor">Carnegie Mellon University, Software Engineering Institute</span>, <span class="refTitle">"MD5 Vulnerable to collision attacks"</span>, <time datetime="2008-12-31" class="refDate">31 December 2008</time>, <span>&lt;<a href="https://www.kb.cert.org/vuls/id/836068/">https://www.kb.cert.org/vuls/id/836068/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9112">[HTTP/1.1]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP/1.1"</span>, <span class="seriesInfo">STD 99</span>, <span class="seriesInfo">RFC 9112</span>, <span class="seriesInfo">DOI 10.17487/RFC9112</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9112">https://www.rfc-editor.org/rfc/rfc9112</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.thomson-http-mice">[I-D.thomson-http-mice]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">J. Yasskin</span>, <span class="refTitle">"Merkle Integrity Content Encoding"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-thomson-http-mice-03</span>, <time datetime="2018-08-13" class="refDate">13 August 2018</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-thomson-http-mice-03">https://datatracker.ietf.org/doc/html/draft-thomson-http-mice-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IACR-2020-014">[IACR-2020-014]</dt>
+        <dd>
+<span class="refAuthor">Leurent, G.</span> and <span class="refAuthor">T. Peyrin</span>, <span class="refTitle">"SHA-1 is a Shambles"</span>, <time datetime="2020-01-05" class="refDate">5 January 2020</time>, <span>&lt;<a href="https://eprint.iacr.org/2020/014.pdf">https://eprint.iacr.org/2020/014.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NIST800-32">[NIST800-32]</dt>
+        <dd>
+<span class="refAuthor">National Institute of Standards and Technology, U.S. Department of Commerce</span>, <span class="refTitle">"Introduction to Public Key Technology and the Federal PKI Infrastructure"</span>, <time datetime="2001-02" class="refDate">February 2001</time>, <span>&lt;<a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-32.pdf">https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-32.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NO-MD5">[NO-MD5]</dt>
+        <dd>
+<span class="refAuthor">Turner, S.</span> and <span class="refAuthor">L. Chen</span>, <span class="refTitle">"Updated Security Considerations for the MD5 Message-Digest and the HMAC-MD5 Algorithms"</span>, <span class="seriesInfo">RFC 6151</span>, <span class="seriesInfo">DOI 10.17487/RFC6151</span>, <time datetime="2011-03" class="refDate">March 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6151">https://www.rfc-editor.org/rfc/rfc6151</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NO-SHA">[NO-SHA]</dt>
+        <dd>
+<span class="refAuthor">Polk, T.</span>, <span class="refAuthor">Chen, L.</span>, <span class="refAuthor">Turner, S.</span>, and <span class="refAuthor">P. Hoffman</span>, <span class="refTitle">"Security Considerations for the SHA-0 and SHA-1 Message-Digest Algorithms"</span>, <span class="seriesInfo">RFC 6194</span>, <span class="seriesInfo">DOI 10.17487/RFC6194</span>, <time datetime="2011-03" class="refDate">March 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6194">https://www.rfc-editor.org/rfc/rfc6194</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="PATCH">[PATCH]</dt>
+        <dd>
+<span class="refAuthor">Dusseault, L.</span> and <span class="refAuthor">J. Snell</span>, <span class="refTitle">"PATCH Method for HTTP"</span>, <span class="seriesInfo">RFC 5789</span>, <span class="seriesInfo">DOI 10.17487/RFC5789</span>, <time datetime="2010-03" class="refDate">March 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5789">https://www.rfc-editor.org/rfc/rfc5789</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3230">[RFC3230]</dt>
+        <dd>
+<span class="refAuthor">Mogul, J.</span> and <span class="refAuthor">A. Van Hoff</span>, <span class="refTitle">"Instance Digests in HTTP"</span>, <span class="seriesInfo">RFC 3230</span>, <span class="seriesInfo">DOI 10.17487/RFC3230</span>, <time datetime="2002-01" class="refDate">January 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3230">https://www.rfc-editor.org/rfc/rfc3230</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6211">[RFC6211]</dt>
+        <dd>
+<span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"Cryptographic Message Syntax (CMS) Algorithm Identifier Protection Attribute"</span>, <span class="seriesInfo">RFC 6211</span>, <span class="seriesInfo">DOI 10.17487/RFC6211</span>, <time datetime="2011-04" class="refDate">April 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6211">https://www.rfc-editor.org/rfc/rfc6211</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7396">[RFC7396]</dt>
+        <dd>
+<span class="refAuthor">Hoffman, P.</span> and <span class="refAuthor">J. Snell</span>, <span class="refTitle">"JSON Merge Patch"</span>, <span class="seriesInfo">RFC 7396</span>, <span class="seriesInfo">DOI 10.17487/RFC7396</span>, <time datetime="2014-10" class="refDate">October 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7396">https://www.rfc-editor.org/rfc/rfc7396</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7696">[RFC7696]</dt>
+        <dd>
+<span class="refAuthor">Housley, R.</span>, <span class="refTitle">"Guidelines for Cryptographic Algorithm Agility and Selecting Mandatory-to-Implement Algorithms"</span>, <span class="seriesInfo">BCP 201</span>, <span class="seriesInfo">RFC 7696</span>, <span class="seriesInfo">DOI 10.17487/RFC7696</span>, <time datetime="2015-11" class="refDate">November 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7696">https://www.rfc-editor.org/rfc/rfc7696</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7807">[RFC7807]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">E. Wilde</span>, <span class="refTitle">"Problem Details for HTTP APIs"</span>, <span class="seriesInfo">RFC 7807</span>, <span class="seriesInfo">DOI 10.17487/RFC7807</span>, <time datetime="2016-03" class="refDate">March 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7807">https://www.rfc-editor.org/rfc/rfc7807</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8188">[RFC8188]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span>, <span class="refTitle">"Encrypted Content-Encoding for HTTP"</span>, <span class="seriesInfo">RFC 8188</span>, <span class="seriesInfo">DOI 10.17487/RFC8188</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8188">https://www.rfc-editor.org/rfc/rfc8188</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9260">[RFC9260]</dt>
+        <dd>
+<span class="refAuthor">Stewart, R.</span>, <span class="refAuthor">Tüxen, M.</span>, and <span class="refAuthor">K. Nielsen</span>, <span class="refTitle">"Stream Control Transmission Protocol"</span>, <span class="seriesInfo">RFC 9260</span>, <span class="seriesInfo">DOI 10.17487/RFC9260</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9260">https://www.rfc-editor.org/rfc/rfc9260</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SIGNATURES">[SIGNATURES]</dt>
+        <dd>
+<span class="refAuthor">Backman, A.</span>, <span class="refAuthor">Richer, J.</span>, and <span class="refAuthor">M. Sporny</span>, <span class="refTitle">"HTTP Message Signatures"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-message-signatures-19</span>, <time datetime="2023-07-26" class="refDate">26 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-19">https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-19</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TLS">[TLS]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="UNIX">[UNIX]</dt>
+      <dd>
+<span class="refAuthor">The Open Group</span>, <span class="refTitle">"The Single UNIX Specification, Version 2 - 6 Vol Set for UNIX 98"</span>, <time datetime="1997-02" class="refDate">February 1997</time>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+<div id="resource-representation">
+<section id="appendix-A">
+      <h2 id="name-resource-representation-and">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-resource-representation-and" class="section-name selfRef">Resource Representation and Representation Data</a>
+      </h2>
+<p id="appendix-A-1">This section following examples show how representation metadata, content
+transformations, and method impacts on the message and content. These examples a
+not exhaustive.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Unless otherwise indicated, the examples are based on the JSON object <code>{"hello":
+"world"}</code> followed by an LF. When the content contains non-printable characters
+(e.g., when it is encoded) it is shown as a sequence of hex-encoded bytes.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">Consider a client that wishes to upload a JSON object using the PUT method. It
+could do this using the application/json content type without any content
+coding.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+<span id="name-request-containing-a-json-o"></span><figure id="figure-1">
+        <div class="lang-http-message sourcecode" id="appendix-A-4.1">
+<pre>
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Length: 19
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-request-containing-a-json-o" class="selfRef">Request containing a JSON object without any content coding</a>
+        </figcaption></figure>
+<p id="appendix-A-5">However, the use of content coding is quite common. The client could also upload
+the same data with a gzip coding (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.4.1.3" class="relref">Section 8.4.1.3</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>). Note that in
+this case, the <code>Content-Length</code> contains a larger value due to the coding
+overheads.<a href="#appendix-A-5" class="pilcrow">¶</a></p>
+<span id="name-request-containing-a-gzip-e"></span><div id="ex-put-gz">
+<figure id="figure-2">
+        <div class="lang-http-message sourcecode" id="appendix-A-6.1">
+<pre>
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Encoding: gzip
+Content-Length: 39
+
+1F 8B 08 00 88 41 37 64 00 FF
+AB 56 CA 48 CD C9 C9 57 B2 52
+50 2A CF 2F CA 49 51 AA E5 02
+00 D9 E4 31 E7 13 00 00 00
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-request-containing-a-gzip-e" class="selfRef">Request containing a gzip-encoded JSON object</a>
+        </figcaption></figure>
+</div>
+<p id="appendix-A-7">Sending the gzip coded data without indicating it via <code>Content-Encoding</code> means
+that the content is malformed. In this case, the server can reply with an error.<a href="#appendix-A-7" class="pilcrow">¶</a></p>
+<span id="name-request-containing-malforme"></span><figure id="figure-3">
+        <div class="lang-http-message sourcecode" id="appendix-A-8.1">
+<pre>
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+
+Content-Length: 39
+
+1F 8B 08 00 88 41 37 64 00 FF
+AB 56 CA 48 CD C9 C9 57 B2 52
+50 2A CF 2F CA 49 51 AA E5 02
+00 D9 E4 31 E7 13 00 00 00
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-request-containing-malforme" class="selfRef">Request containing malformed JSON</a>
+        </figcaption></figure>
+<span id="name-an-error-response-for-a-mal"></span><figure id="figure-4">
+        <div class="lang-http-message sourcecode" id="appendix-A-9.1">
+<pre>
+HTTP/1.1 400 Bad Request
+
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-an-error-response-for-a-mal" class="selfRef">An error response for a malformed content</a>
+        </figcaption></figure>
+<p id="appendix-A-10">A Range-Request affects the transferred message content. In this example, the
+client is accessing the resource at <code>/entries/1234</code>, which is the JSON object
+<code>{"hello": "world"}</code> followed by an LF. However, the client has indicated a
+preferred content coding and a specific byte range.<a href="#appendix-A-10" class="pilcrow">¶</a></p>
+<span id="name-request-for-partial-content"></span><figure id="figure-5">
+        <div class="lang-http-message sourcecode" id="appendix-A-11.1">
+<pre>
+GET /entries/1234 HTTP/1.1
+Host: foo.example
+Accept-Encoding: gzip
+Range: bytes=1-7
+
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-request-for-partial-content" class="selfRef">Request for partial content</a>
+        </figcaption></figure>
+<p id="appendix-A-12">The server satisfies the client request by responding with a partial
+representation (equivalent to the first 10 of the JSON object displayed in whole
+in <a href="#ex-put-gz" class="auto internal xref">Figure 2</a>).<a href="#appendix-A-12" class="pilcrow">¶</a></p>
+<span id="name-partial-response-from-a-gzi"></span><figure id="figure-6">
+        <div class="lang-http-message sourcecode" id="appendix-A-13.1">
+<pre>
+HTTP/1.1 206 Partial Content
+Content-Encoding: gzip
+Content-Type: application/json
+Content-Range: bytes 0-9/39
+
+1F 8B 08 00 A5 B4 BD 62 02 FF
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<a href="#name-partial-response-from-a-gzi" class="selfRef">Partial response from a gzip-encoded representation</a>
+        </figcaption></figure>
+<p id="appendix-A-14">Aside from content coding or range requests, the method can also affect the
+transferred message content. For example, the response to a HEAD request does
+not carry content but in this example case does include a Content-Length; see
+<span><a href="https://rfc-editor.org/rfc/rfc9110#section-8.6" class="relref">Section 8.6</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>.<a href="#appendix-A-14" class="pilcrow">¶</a></p>
+<span id="name-head-request"></span><figure id="figure-7">
+        <div class="lang-http-message sourcecode" id="appendix-A-15.1">
+<pre>
+HEAD /entries/1234 HTTP/1.1
+Host: foo.example
+Accept: application/json
+Accept-Encoding: gzip
+
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-head-request" class="selfRef">HEAD request</a>
+        </figcaption></figure>
+<span id="name-response-to-head-request-em"></span><figure id="figure-8">
+        <div class="lang-http-message sourcecode" id="appendix-A-16.1">
+<pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Encoding: gzip
+Content-Length: 39
+
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-response-to-head-request-em" class="selfRef">Response to HEAD request (empty content)</a>
+        </figcaption></figure>
+<p id="appendix-A-17">Finally, the semantics of a response might decouple the target URI
+from the enclosed representation. In the example below, the client issues a POST
+request directed to <code>/authors/</code> but the response includes a <code>Content-Location</code>
+header field that indicates the enclosed representation refers to the
+resource available at <code>/authors/123</code>. Note that <code>Content-Length</code> is not sent
+in this example.<a href="#appendix-A-17" class="pilcrow">¶</a></p>
+<span id="name-post-request"></span><figure id="figure-9">
+        <div class="lang-http-message sourcecode" id="appendix-A-18.1">
+<pre>
+POST /authors/ HTTP/1.1
+Host: foo.example
+Accept: application/json
+Content-Type: application/json
+
+{"author": "Camilleri"}
+</pre>
+</div>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-post-request" class="selfRef">POST request</a>
+        </figcaption></figure>
+<span id="name-response-with-content-locat"></span><figure id="figure-10">
+        <div class="lang-http-message sourcecode" id="appendix-A-19.1">
+<pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Location: /authors/123
+Location: /authors/123
+
+{"id": "123", "author": "Camilleri"}
+</pre>
+</div>
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<a href="#name-response-with-content-locat" class="selfRef">Response with Content-Location header</a>
+        </figcaption></figure>
+</section>
+</div>
+<div id="examples-unsolicited">
+<section id="appendix-B">
+      <h2 id="name-examples-of-unsolicited-dig">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-examples-of-unsolicited-dig" class="section-name selfRef">Examples of Unsolicited Digest</a>
+      </h2>
+<p id="appendix-B-1">The following examples demonstrate interactions where a server responds with a
+<code>Content-Digest</code> or <code>Repr-Digest</code> fields even though the client did not solicit one using
+<code>Want-Content-Digest</code> or <code>Want-Repr-Digest</code>.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">Some examples include JSON objects in the content.
+For presentation purposes, objects that fit completely within the line-length limits
+are presented on a single line using compact notation with no leading space.
+Objects that would exceed line-length limits are presented across multiple lines
+(one line per key-value pair) with 2 spaces of leading indentation.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-B-3">Checksum mechanisms defined in this document are media-type agnostic
+and do not provide canonicalization algorithms for specific formats.
+Examples are calculated inclusive of any space.
+While examples can include both fields,
+<code>Content-Digest</code> and <code>Repr-Digest</code> can be returned independently.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
+<div id="example-full-representation">
+<section id="appendix-B.1">
+        <h3 id="name-server-returns-full-represe">
+<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-server-returns-full-represe" class="section-name selfRef">Server Returns Full Representation Data</a>
+        </h3>
+<p id="appendix-B.1-1">In this example, the message content conveys complete representation data.
+This means that in the response, <code>Content-Digest</code> and <code>Repr-Digest</code>
+are both computed over the JSON object <code>{"hello": "world"}</code> followed by an LF, and thus have the same value.<a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
+<span id="name-get-request-for-an-item"></span><figure id="figure-11">
+          <div class="lang-http-message sourcecode" id="appendix-B.1-2.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+
+</pre>
+</div>
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<a href="#name-get-request-for-an-item" class="selfRef">GET request for an item</a>
+          </figcaption></figure>
+<span id="name-response-with-identical-rep"></span><figure id="figure-12">
+          <div class="lang-http-message sourcecode" id="appendix-B.1-3.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 19
+Content-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<a href="#name-response-with-identical-rep" class="selfRef">Response with identical Repr-Digest and Content-Digest</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="server-returns-no-representation-data">
+<section id="appendix-B.2">
+        <h3 id="name-server-returns-no-represent">
+<a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-server-returns-no-represent" class="section-name selfRef">Server Returns No Representation Data</a>
+        </h3>
+<p id="appendix-B.2-1">In this example, a HEAD request is used to retrieve the checksum
+of a resource.<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.2-2">The response <code>Content-Digest</code> field-value is computed on empty content.
+<code>Repr-Digest</code> is calculated over the JSON object
+<code>{"hello": "world"}</code> followed by an LF, which is not shown because there is no content.<a href="#appendix-B.2-2" class="pilcrow">¶</a></p>
+<span id="name-head-request-for-an-item"></span><figure id="figure-13">
+          <div class="lang-http-message sourcecode" id="appendix-B.2-3.1">
+<pre>
+HEAD /items/123 HTTP/1.1
+Host: foo.example
+
+</pre>
+</div>
+<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
+<a href="#name-head-request-for-an-item" class="selfRef">HEAD request for an item</a>
+          </figcaption></figure>
+<span id="name-response-with-both-content-"></span><figure id="figure-14">
+          <div class="lang-http-message sourcecode" id="appendix-B.2-4.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Digest: \
+  sha-256=:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+</pre>
+</div>
+<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
+<a href="#name-response-with-both-content-" class="selfRef">Response with both Content-Digest and Digest; empty content</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="server-returns-partial-representation-data">
+<section id="appendix-B.3">
+        <h3 id="name-server-returns-partial-repr">
+<a href="#appendix-B.3" class="section-number selfRef">B.3. </a><a href="#name-server-returns-partial-repr" class="section-name selfRef">Server Returns Partial Representation Data</a>
+        </h3>
+<p id="appendix-B.3-1">In this example, the client makes a range request and the server responds with
+partial content.<a href="#appendix-B.3-1" class="pilcrow">¶</a></p>
+<span id="name-request-for-partial-content-2"></span><figure id="figure-15">
+          <div class="lang-http-message sourcecode" id="appendix-B.3-2.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+Range: bytes=10-18
+
+</pre>
+</div>
+<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
+<a href="#name-request-for-partial-content-2" class="selfRef">Request for partial content</a>
+          </figcaption></figure>
+<span id="name-partial-response-with-both-"></span><figure id="figure-16">
+          <div class="lang-http-message sourcecode" id="appendix-B.3-3.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 206 Partial Content
+Content-Type: application/json
+Content-Range: bytes 10-18/19
+Content-Digest: \
+  sha-256=:jjcgBDWNAtbYUXI37CVG3gRuGOAjaaDRGpIUFsdyepQ=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+"world"}
+</pre>
+</div>
+<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
+<a href="#name-partial-response-with-both-" class="selfRef">Partial response with both Content-Digest and Repr-Digest</a>
+          </figcaption></figure>
+<p id="appendix-B.3-4">In the response message above, note that the
+<code>Repr-Digest</code> and <code>Content-Digests</code> are different.
+The <code>Repr-Digest</code> field-value is calculated across the entire JSON object
+<code>{"hello": "world"}</code> followed by an LF, and the field is<a href="#appendix-B.3-4" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="appendix-B.3-5">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+</pre><a href="#appendix-B.3-5" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B.3-6">However, since the message content is constrained to bytes 10-18,
+the <code>Content-Digest</code> field-value is calculated over the
+sequence  <code>"world"}</code> followed by an LF, thus resulting in<a href="#appendix-B.3-6" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="appendix-B.3-7">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-256=:jjcgBDWNAtbYUXI37CVG3gRuGOAjaaDRGpIUFsdyepQ=:
+</pre><a href="#appendix-B.3-7" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="client-and-server-provide-full-representation-data">
+<section id="appendix-B.4">
+        <h3 id="name-client-and-server-provide-f">
+<a href="#appendix-B.4" class="section-number selfRef">B.4. </a><a href="#name-client-and-server-provide-f" class="section-name selfRef">Client and Server Provide Full Representation Data</a>
+        </h3>
+<p id="appendix-B.4-1">The request contains a <code>Repr-Digest</code> field-value calculated on the enclosed
+representation. It also includes an <code>Accept-Encoding: br</code> header field that advertises the
+client supports Brotli encoding.<a href="#appendix-B.4-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.4-2">The response includes a <code>Content-Encoding: br</code> that indicates the selected
+representation is Brotli-encoded. The <code>Repr-Digest</code> field-value is therefore
+different compared to the request.<a href="#appendix-B.4-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.4-3">For presentation purposes, the response body is displayed as a sequence of
+hex-encoded bytes because it contains non-printable characters.<a href="#appendix-B.4-3" class="pilcrow">¶</a></p>
+<span id="name-put-request-with-digest"></span><figure id="figure-17">
+          <div class="lang-http-message sourcecode" id="appendix-B.4-4.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-17" class="selfRef">Figure 17</a>:
+<a href="#name-put-request-with-digest" class="selfRef">PUT Request with Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-digest-of-enc"></span><figure id="figure-18">
+          <div class="lang-http-message sourcecode" id="appendix-B.4-5.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Location: /items/123
+Content-Encoding: br
+Content-Length: 23
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:
+
+8B 08 80 7B 22 68 65 6C 6C 6F
+22 3A 20 22 77 6F 72 6C 64 22
+7D 0A 03
+</pre>
+</div>
+<figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
+<a href="#name-response-with-digest-of-enc" class="selfRef">Response with Digest of encoded response</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="client-provides-full-representation-data-server-provides-no-representation-data">
+<section id="appendix-B.5">
+        <h3 id="name-client-provides-full-repres">
+<a href="#appendix-B.5" class="section-number selfRef">B.5. </a><a href="#name-client-provides-full-repres" class="section-name selfRef">Client Provides Full Representation Data, Server Provides No Representation Data</a>
+        </h3>
+<p id="appendix-B.5-1">The request <code>Repr-Digest</code> field-value is calculated on the enclosed content, which
+is the JSON object <code>{"hello": "world"}</code> followed by an LF<a href="#appendix-B.5-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.5-2">The response <code>Repr-Digest</code> field-value
+depends on the representation metadata header fields, including
+<code>Content-Encoding: br</code> even when the response does not contain content.<a href="#appendix-B.5-2" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="appendix-B.5-3">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Length: 19
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</pre><a href="#appendix-B.5-3" class="pilcrow">¶</a>
+</div>
+<span id="name-empty-response-with-digest"></span><figure id="figure-19">
+          <div class="lang-http-message sourcecode" id="appendix-B.5-4.1">
+<pre>
+HTTP/1.1 204 No Content
+Content-Type: application/json
+Content-Encoding: br
+Repr-Digest: sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:
+
+</pre>
+</div>
+<figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
+<a href="#name-empty-response-with-digest" class="selfRef">Empty response with Digest</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="client-and-server-provide-full-representation-data-1">
+<section id="appendix-B.6">
+        <h3 id="name-client-and-server-provide-fu">
+<a href="#appendix-B.6" class="section-number selfRef">B.6. </a><a href="#name-client-and-server-provide-fu" class="section-name selfRef">Client and Server Provide Full Representation Data</a>
+        </h3>
+<p id="appendix-B.6-1">The response contains two digest values using different algorithms.<a href="#appendix-B.6-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.6-2">For presentation purposes, the response body is displayed as a sequence of
+hex-encoded bytes because it contains non-printable characters.<a href="#appendix-B.6-2" class="pilcrow">¶</a></p>
+<span id="name-put-request-with-digest-2"></span><figure id="figure-20">
+          <div class="lang-http-message sourcecode" id="appendix-B.6-3.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
+<a href="#name-put-request-with-digest-2" class="selfRef">PUT Request with Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-digest-of-enco"></span><figure id="figure-21">
+          <div class="lang-http-message sourcecode" id="appendix-B.6-4.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Encoding: br
+Content-Location: /items/123
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:db7fdBbgZMgX1Wb2MjA8zZj+rSNgfmDCEEXM8qLWfpfoNY0sCpHAzZbj\
+  09X1/7HAb7Od5Qfto4QpuBsFbUO3dQ==:
+
+8B 08 80 7B 22 68 65 6C 6C 6F
+22 3A 20 22 77 6F 72 6C 64 22
+7D 0A 03
+</pre>
+</div>
+<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
+<a href="#name-response-with-digest-of-enco" class="selfRef">Response with Digest of Encoded Content</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="post-not-request-uri">
+<section id="appendix-B.7">
+        <h3 id="name-post-response-does-not-refe">
+<a href="#appendix-B.7" class="section-number selfRef">B.7. </a><a href="#name-post-response-does-not-refe" class="section-name selfRef">POST Response does not Reference the Request URI</a>
+        </h3>
+<p id="appendix-B.7-1">The request <code>Repr-Digest</code> field-value is computed on the enclosed representation
+(see <a href="#state-changing-requests" class="auto internal xref">Section 3.1</a>), which is the JSON object <code>{"title": "New
+Title"}</code> followed by an LF.<a href="#appendix-B.7-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.7-2">The representation enclosed in the response is a multiline JSON object followed by an LF.
+It refers to the resource identified by
+<code>Content-Location</code> (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-6.4.2" class="relref">Section 6.4.2</a> of [<a href="#RFC9110" class="cite xref">HTTP</a>]</span>);
+an application can thus use <code>Repr-Digest</code> in association with the resource
+referenced by <code>Content-Location</code>.<a href="#appendix-B.7-2" class="pilcrow">¶</a></p>
+<span id="name-post-request-with-digest"></span><figure id="figure-22">
+          <div class="lang-http-message sourcecode" id="appendix-B.7-3.1">
+<pre>
+POST /books HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</pre>
+</div>
+<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
+<a href="#name-post-request-with-digest" class="selfRef">POST Request with Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-digest-of-res"></span><figure id="figure-23">
+          <div class="lang-http-message sourcecode" id="appendix-B.7-4.1">
+<pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Location: /books/123
+Location: /books/123
+Repr-Digest: sha-256=:uVSlinTTdQUwm2On4k8TJUikGN1bf/Ds8WPX4oe0h9I=:
+
+{
+  "id": "123",
+  "title": "New Title"
+}
+</pre>
+</div>
+<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
+<a href="#name-response-with-digest-of-res" class="selfRef">Response with Digest of Resource</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="post-referencing-status">
+<section id="appendix-B.8">
+        <h3 id="name-post-response-describes-the">
+<a href="#appendix-B.8" class="section-number selfRef">B.8. </a><a href="#name-post-response-describes-the" class="section-name selfRef">POST Response Describes the Request Status</a>
+        </h3>
+<p id="appendix-B.8-1">The request <code>Repr-Digest</code> field-value is computed on the enclosed representation (see
+<a href="#state-changing-requests" class="auto internal xref">Section 3.1</a>), which is the JSON object <code>{"title": "New
+Title"}</code> followed by an LF.<a href="#appendix-B.8-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.8-2">The representation enclosed in the response describes the status of the request,
+so <code>Repr-Digest</code> is computed on that enclosed representation. It is a multiline
+JSON object followed by an LF.<a href="#appendix-B.8-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.8-3">Response <code>Repr-Digest</code> has no explicit relation with the resource referenced by
+<code>Location</code>.<a href="#appendix-B.8-3" class="pilcrow">¶</a></p>
+<span id="name-post-request-with-digest-2"></span><figure id="figure-24">
+          <div class="lang-http-message sourcecode" id="appendix-B.8-4.1">
+<pre>
+POST /books HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</pre>
+</div>
+<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
+<a href="#name-post-request-with-digest-2" class="selfRef">POST Request with Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-digest-of-rep"></span><figure id="figure-25">
+          <div class="lang-http-message sourcecode" id="appendix-B.8-5.1">
+<pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+Repr-Digest: sha-256=:yXIGDTN5VrfoyisKlXgRKUHHMs35SNtyC3szSz1dbO8=:
+Location: /books/123
+
+{
+  "status": "created",
+  "id": "123",
+  "ts": 1569327729,
+  "instance": "/books/123"
+}
+</pre>
+</div>
+<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
+<a href="#name-response-with-digest-of-rep" class="selfRef">Response with Digest of Representation</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="digest-with-patch">
+<section id="appendix-B.9">
+        <h3 id="name-digest-with-patch">
+<a href="#appendix-B.9" class="section-number selfRef">B.9. </a><a href="#name-digest-with-patch" class="section-name selfRef">Digest with PATCH</a>
+        </h3>
+<p id="appendix-B.9-1">This case is analogous to a POST request where the target resource reflects the
+target URI.<a href="#appendix-B.9-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.9-2">The PATCH request uses the <code>application/merge-patch+json</code> media type defined in
+<span>[<a href="#RFC7396" class="cite xref">RFC7396</a>]</span>. <code>Repr-Digest</code> is calculated on the content, which corresponds to the
+patch document and is the JSON object <code>{"title": "New Title"}</code> followed by an
+LF.<a href="#appendix-B.9-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.9-3">The response <code>Repr-Digest</code> field-value is computed on the complete representation of the patched
+resource. It is a multiline JSON object followed by an LF.<a href="#appendix-B.9-3" class="pilcrow">¶</a></p>
+<span id="name-patch-request-with-digest"></span><div id="fig-patch">
+<figure id="figure-26">
+          <div class="lang-http-message sourcecode" id="appendix-B.9-4.1">
+<pre>
+PATCH /books/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/merge-patch+json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</pre>
+</div>
+<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
+<a href="#name-patch-request-with-digest" class="selfRef">PATCH Request with Digest</a>
+          </figcaption></figure>
+</div>
+<span id="name-response-with-digest-of-repr"></span><figure id="figure-27">
+          <div class="lang-http-message sourcecode" id="appendix-B.9-5.1">
+<pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: sha-256=:uVSlinTTdQUwm2On4k8TJUikGN1bf/Ds8WPX4oe0h9I=:
+
+{
+  "id": "123",
+  "title": "New Title"
+}
+</pre>
+</div>
+<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
+<a href="#name-response-with-digest-of-repr" class="selfRef">Response with Digest of Representation</a>
+          </figcaption></figure>
+<p id="appendix-B.9-6">Note that a <code>204 No Content</code> response without content but with the same
+<code>Repr-Digest</code> field-value would have been legitimate too.
+In that case, <code>Content-Digest</code> would have been computed on an empty content.<a href="#appendix-B.9-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="error-responses">
+<section id="appendix-B.10">
+        <h3 id="name-error-responses">
+<a href="#appendix-B.10" class="section-number selfRef">B.10. </a><a href="#name-error-responses" class="section-name selfRef">Error responses</a>
+        </h3>
+<p id="appendix-B.10-1">In error responses, the representation data does not necessarily refer to the
+target resource. Instead, it refers to the representation of the error.<a href="#appendix-B.10-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.10-2">In the following example, a client sends the same request from <a href="#fig-patch" class="auto internal xref">Figure 26</a> to
+patch the resource located at /books/123. However, the resource does not exist
+and the server generates a 404 response with a body that describes the error in
+accordance with <span>[<a href="#RFC7807" class="cite xref">RFC7807</a>]</span>.<a href="#appendix-B.10-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.10-3">The response <code>Repr-Digest</code> field-value is computed on this enclosed representation.
+It is a multiline JSON object followed by an LF.<a href="#appendix-B.10-3" class="pilcrow">¶</a></p>
+<span id="name-response-with-digest-of-err"></span><figure id="figure-28">
+          <div class="lang-http-message sourcecode" id="appendix-B.10-4.1">
+<pre>
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+Repr-Digest: sha-256=:EXB0S2VF2H7ijkAVJkH1Sm0pBho0iDZcvVUHHXTTZSA=:
+
+{
+  "title": "Not Found",
+  "detail": "Cannot PATCH a non-existent resource",
+  "status": 404
+}
+</pre>
+</div>
+<figcaption><a href="#figure-28" class="selfRef">Figure 28</a>:
+<a href="#name-response-with-digest-of-err" class="selfRef">Response with Digest of Error Representation</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="use-with-trailer-fields-and-transfer-coding">
+<section id="appendix-B.11">
+        <h3 id="name-use-with-trailer-fields-and">
+<a href="#appendix-B.11" class="section-number selfRef">B.11. </a><a href="#name-use-with-trailer-fields-and" class="section-name selfRef">Use with Trailer Fields and Transfer Coding</a>
+        </h3>
+<p id="appendix-B.11-1">An origin server sends <code>Repr-Digest</code> as trailer field, so it can calculate digest-value
+while streaming content and thus mitigate resource consumption.
+The <code>Repr-Digest</code> field-value is the same as in <a href="#example-full-representation" class="auto internal xref">Appendix B.1</a> because <code>Repr-Digest</code> is designed to
+be independent of the use of one or more transfer codings (see <a href="#representation-digest" class="auto internal xref">Section 3</a>).<a href="#appendix-B.11-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.11-2">In the response content below, the string "\r\n" represent the bytes CRLF.<a href="#appendix-B.11-2" class="pilcrow">¶</a></p>
+<span id="name-get-request"></span><figure id="figure-29">
+          <div class="lang-http-message sourcecode" id="appendix-B.11-3.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+
+</pre>
+</div>
+<figcaption><a href="#figure-29" class="selfRef">Figure 29</a>:
+<a href="#name-get-request" class="selfRef">GET Request</a>
+          </figcaption></figure>
+<span id="name-chunked-response-with-diges"></span><figure id="figure-30">
+          <div class="lang-http-message sourcecode" id="appendix-B.11-4.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+Trailer: Digest
+
+8\r\n
+{"hello"\r\n
+8\r\n
+: "world\r\n
+3\r\n
+"}\n\r\n
+0\r\n
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:\r\n
+
+</pre>
+</div>
+<figcaption><a href="#figure-30" class="selfRef">Figure 30</a>:
+<a href="#name-chunked-response-with-diges" class="selfRef">Chunked Response with Digest</a>
+          </figcaption></figure>
+</section>
+</div>
+</section>
+</div>
+<div id="examples-solicited">
+<section id="appendix-C">
+      <h2 id="name-examples-of-want-repr-diges">
+<a href="#appendix-C" class="section-number selfRef">Appendix C. </a><a href="#name-examples-of-want-repr-diges" class="section-name selfRef">Examples of Want-Repr-Digest Solicited Digest</a>
+      </h2>
+<p id="appendix-C-1">The following examples demonstrate interactions where a client solicits a
+<code>Repr-Digest</code> using <code>Want-Repr-Digest</code>.
+The behavior of <code>Content-Digest</code> and <code>Want-Content-Digest</code> is identical.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
+<p id="appendix-C-2">Some examples include JSON objects in the content.
+For presentation purposes, objects that fit completely within the line-length limits
+are presented on a single line using compact notation with no leading space.
+Objects that would exceed line-length limits are presented across multiple lines
+(one line per key-value pair) with 2 spaces of leading indentation.<a href="#appendix-C-2" class="pilcrow">¶</a></p>
+<p id="appendix-C-3">Checksum mechanisms described in this document are media-type agnostic
+and do not provide canonicalization algorithms for specific formats.
+Examples are calculated inclusive of any space.<a href="#appendix-C-3" class="pilcrow">¶</a></p>
+<div id="server-selects-clients-least-preferred-algorithm">
+<section id="appendix-C.1">
+        <h3 id="name-server-selects-clients-leas">
+<a href="#appendix-C.1" class="section-number selfRef">C.1. </a><a href="#name-server-selects-clients-leas" class="section-name selfRef">Server Selects Client's Least Preferred Algorithm</a>
+        </h3>
+<p id="appendix-C.1-1">The client requests a digest, preferring "sha". The server is free to reply with
+"sha-256" anyway.<a href="#appendix-C.1-1" class="pilcrow">¶</a></p>
+<span id="name-get-request-with-want-repr-"></span><figure id="figure-31">
+          <div class="lang-http-message sourcecode" id="appendix-C.1-2.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha-256=3, sha=10
+
+</pre>
+</div>
+<figcaption><a href="#figure-31" class="selfRef">Figure 31</a>:
+<a href="#name-get-request-with-want-repr-" class="selfRef">GET Request with Want-Repr-Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-different-alg"></span><figure id="figure-32">
+          <div class="lang-http-message sourcecode" id="appendix-C.1-3.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-32" class="selfRef">Figure 32</a>:
+<a href="#name-response-with-different-alg" class="selfRef">Response with Different Algorithm</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="ex-server-selects-unsupported-algorithm">
+<section id="appendix-C.2">
+        <h3 id="name-server-selects-algorithm-un">
+<a href="#appendix-C.2" class="section-number selfRef">C.2. </a><a href="#name-server-selects-algorithm-un" class="section-name selfRef">Server Selects Algorithm Unsupported by Client</a>
+        </h3>
+<p id="appendix-C.2-1">The client requests a "sha" digest because that is the only algorithm it
+supports. The server is not obliged to produce a response containing a "sha"
+digest, it instead uses a different algorithm.<a href="#appendix-C.2-1" class="pilcrow">¶</a></p>
+<span id="name-get-request-with-want-repr-d"></span><figure id="figure-33">
+          <div class="lang-http-message sourcecode" id="appendix-C.2-2.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha=10
+
+</pre>
+</div>
+<figcaption><a href="#figure-33" class="selfRef">Figure 33</a>:
+<a href="#name-get-request-with-want-repr-d" class="selfRef">GET Request with Want-Repr-Digest</a>
+          </figcaption></figure>
+<span id="name-response-with-unsupported-a"></span><figure id="figure-34">
+          <div class="lang-http-message sourcecode" id="appendix-C.2-3.1">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+
+{"hello": "world"}
+</pre>
+</div>
+<figcaption><a href="#figure-34" class="selfRef">Figure 34</a>:
+<a href="#name-response-with-unsupported-a" class="selfRef">Response with Unsupported Algorithm</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="server-does-not-support-client-algorithm-and-returns-an-error">
+<section id="appendix-C.3">
+        <h3 id="name-server-does-not-support-cli">
+<a href="#appendix-C.3" class="section-number selfRef">C.3. </a><a href="#name-server-does-not-support-cli" class="section-name selfRef">Server Does Not Support Client Algorithm and Returns an Error</a>
+        </h3>
+<p id="appendix-C.3-1"><a href="#ex-server-selects-unsupported-algorithm" class="auto internal xref">Appendix C.2</a> is an example where a server ignores
+the client's preferred digest algorithm.
+Alternatively a server can also reject
+the request and return a response with
+error status code such as 4xx or 5xx.
+This specification does not prescribe
+any requirement on status code selection;
+the follow example illustrates one possible
+option.<a href="#appendix-C.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-C.3-2">In this example, the client requests a "sha" <code>Repr-Digest</code>, and the server returns an
+error with problem details <span>[<a href="#RFC7807" class="cite xref">RFC7807</a>]</span> contained in the content. The problem
+details contain a list of the hashing algorithms that the server supports. This
+is purely an example, this specification does not define any format or
+requirements for such content.<a href="#appendix-C.3-2" class="pilcrow">¶</a></p>
+<span id="name-get-request-with-want-repr-di"></span><figure id="figure-35">
+          <div class="lang-http-message sourcecode" id="appendix-C.3-3.1">
+<pre>
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha=10
+
+</pre>
+</div>
+<figcaption><a href="#figure-35" class="selfRef">Figure 35</a>:
+<a href="#name-get-request-with-want-repr-di" class="selfRef">GET Request with Want-Repr-Digest</a>
+          </figcaption></figure>
+<span id="name-response-advertising-the-su"></span><figure id="figure-36">
+          <div class="lang-http-message sourcecode" id="appendix-C.3-4.1">
+<pre>
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+
+{
+  "title": "Bad Request",
+  "detail": "Supported hashing algorithms: sha-256, sha-512",
+  "status": 400
+}
+</pre>
+</div>
+<figcaption><a href="#figure-36" class="selfRef">Figure 36</a>:
+<a href="#name-response-advertising-the-su" class="selfRef">Response advertising the supported algorithms</a>
+          </figcaption></figure>
+</section>
+</div>
+</section>
+</div>
+<div id="sample-digest-values">
+<section id="appendix-D">
+      <h2 id="name-sample-digest-values">
+<a href="#appendix-D" class="section-number selfRef">Appendix D. </a><a href="#name-sample-digest-values" class="section-name selfRef">Sample Digest Values</a>
+      </h2>
+<p id="appendix-D-1">This section shows examples of digest values for different hashing algorithms.
+The input value is the JSON object <code>{"hello": "world"}</code>. The digest values are
+each produced by running the relevant hashing algorithm over the input and
+running the output bytes through <code>Byte Sequence</code> serialization; see <span><a href="https://rfc-editor.org/rfc/rfc8941#section-4.1.8" class="relref">Section 4.1.8</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>.<a href="#appendix-D-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-D-2">
+<pre>
+NOTE: '\' line wrapping per RFC 8792
+
+sha-512 -   :WZDPaVn/7XgHaAy8pmojAkGWoRx2UFChF41A2svX+TaPm+\
+            AbwAgBWnrIiYllu7BNNyealdVLvRwEmTHWXvJwew==:
+
+sha-256 -   :X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+
+md5 -       :Sd/dVLAcvNLSq16eXua5uQ==:
+
+sha -       :07CavjDP4u3/TungoUHJO/Wzr4c=:
+
+unixsum -   :GQU=:
+
+unixcksum - :7zsHAA==:
+
+adler -     :OZkGFw==:
+
+crc32c -    :Q3lHIA==:
+</pre><a href="#appendix-D-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="migrating">
+<section id="appendix-E">
+      <h2 id="name-migrating-from-rfc-3230">
+<a href="#appendix-E" class="section-number selfRef">Appendix E. </a><a href="#name-migrating-from-rfc-3230" class="section-name selfRef">Migrating from RFC 3230</a>
+      </h2>
+<p id="appendix-E-1">HTTP digests are computed by applying a hashing algorithm to input data.
+RFC 3230 defined the input data as an "instance", a term it also defined.
+The concept of instance has since been superseded by the HTTP semantic term "representation".
+It is understood that some implementations of RFC 3230
+mistook "instance" to mean HTTP content.
+Using content for the Digest field is an error
+that leads to interoperability problems between peers that implement RFC 3230.<a href="#appendix-E-1" class="pilcrow">¶</a></p>
+<p id="appendix-E-2">RFC 3230 was only ever intended
+to use what HTTP now defines as selected representation data.
+The semantic concept of digest and representation are explained
+alongside the definition of <span><a href="#representation-digest" class="internal xref">the Repr-Digest field</a> (<a href="#representation-digest" class="auto internal xref">Section 3</a>)</span>.<a href="#appendix-E-2" class="pilcrow">¶</a></p>
+<p id="appendix-E-3">While the syntax of Digest and Repr-Digest are different,
+the considerations and examples this document gives for Repr-Digest
+apply equally to Digest because they operate on the same input data;
+see Sections <a href="#state-changing-requests" class="auto internal xref">3.1</a>, <a href="#security" class="auto internal xref">6</a> and <a href="#usage-in-signatures" class="auto internal xref">6.3</a>.<a href="#appendix-E-3" class="pilcrow">¶</a></p>
+<p id="appendix-E-4">RFC 3230 could never communicate
+the digest of HTTP message content in the Digest field;
+Content-Digest now provides that capability.<a href="#appendix-E-4" class="pilcrow">¶</a></p>
+<p id="appendix-E-5">RFC 3230 allowed algorithms to define their output encoding format for use with
+the Digest field. This resulted in a mix of formats such as base64, hex or
+decimal. By virtue of using Structured fields, Content-Digest and Repr-Digest
+use only a single encoding format. Further explanation and examples are provided in <a href="#sample-digest-values" class="auto internal xref">Appendix D</a>.<a href="#appendix-E-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="appendix-F">
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-F-1">This document is based on ideas from <span>[<a href="#RFC3230" class="cite xref">RFC3230</a>]</span>, so thanks
+to Jeff Mogul and Arthur Van Hoff for their great work.
+The original idea of refreshing RFC3230 arose from an interesting
+discussion with Mark Nottingham, Jeffrey Yasskin, and Martin Thomson when reviewing
+the MICE content coding.<a href="#appendix-F-1" class="pilcrow">¶</a></p>
+<p id="appendix-F-2">Thanks to Julian Reschke for his valuable contributions to this document,
+and to the following contributors that have helped improve this specification by reporting bugs,
+asking smart questions, drafting or reviewing text, and evaluating open issues:
+Mike Bishop,
+Brian Campbell,
+Matthew Kerwin,
+James Manger,
+Tommy Pauly,
+Sean Turner,
+Justin Richer,
+and Erik Wilde.<a href="#appendix-F-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="code-samples">
+<section id="appendix-G">
+      <h2 id="name-code-samples">
+<a href="#name-code-samples" class="section-name selfRef">Code Samples</a>
+      </h2>
+<p id="appendix-G-1">This section is to be removed before publishing as an RFC.<a href="#appendix-G-1" class="pilcrow">¶</a></p>
+<p id="appendix-G-2">How can I generate and validate the digest values, computed over the JSON object
+<code>{"hello": "world"}</code> followed by an LF, shown in the examples throughout this
+document?<a href="#appendix-G-2" class="pilcrow">¶</a></p>
+<p id="appendix-G-3">The following python3 code can be used to generate digests for JSON objects
+using SHA algorithms for a range of encodings. Note that these are formatted as
+base64. This function could be adapted to other algorithms and should take into
+account their specific formatting rules.<a href="#appendix-G-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-G-4">
+<pre>
+import base64, json, hashlib, brotli, logging
+log = logging.getLogger()
+
+def digest_bytes(bytes_, algorithm=hashlib.sha256):
+    checksum_bytes = algorithm(bytes_).digest()
+    log.warning("Log bytes: \n[%r]", bytes_)
+    return base64.encodebytes(checksum_bytes).strip()
+
+def digest(bytes_, encoding=lambda x: x, algorithm=hashlib.sha256):
+    content_encoded = encoding(bytes_)
+    return digest_bytes(content_encoded, algorithm)
+
+
+bytes_ = b'{"hello": "world"}\n'
+
+print("Encoding | hashing algorithm | digest-value")
+print("Identity | sha256 |", digest(bytes_))
+# Encoding | hashing algorithm | digest-value
+# Identity | sha256 | RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=
+
+print("Encoding | hashing algorithm | digest-value")
+print("Brotli | sha256 |", digest(bytes_, encoding=brotli.compress))
+# Encoding | hashing algorithm | digest-value
+# Brotli | sha256 | d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=
+
+print("Encoding | hashing algorithm | digest-value")
+print("Identity | sha512 |", digest(bytes_, algorithm=hashlib.sha512))
+print("Brotli | sha512 |", digest(bytes_, algorithm=hashlib.sha512,
+                                    encoding=brotli.compress))
+# Encoding | hashing algorithm | digest-value
+# Identity | sha512 |b'YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP'
+#                     '+pgk4vf2aCsyRZOtw8MjkM7iw7yZ/WkppmM44T3qg=='
+
+# Brotli | sha512 | b'db7fdBbgZMgX1Wb2MjA8zZj+rSNgfmDCEEXM8qLWfpfoNY'
+#                    '0sCpHAzZbj09X1/7HAb7Od5Qfto4QpuBsFbUO3dQ=='
+
+</pre><a href="#appendix-G-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="changes">
+<section id="appendix-H">
+      <h2 id="name-changes">
+<a href="#name-changes" class="section-name selfRef">Changes</a>
+      </h2>
+<p id="appendix-H-1">This section is to be removed before publishing as an RFC.<a href="#appendix-H-1" class="pilcrow">¶</a></p>
+<div id="since-draft-ietf-httpbis-digest-headers-12">
+<section id="appendix-H.1">
+        <h3 id="name-since-draft-ietf-httpbis-di">
+<a href="#name-since-draft-ietf-httpbis-di" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-12</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.1-1.1">
+            <p id="appendix-H.1-1.1.1">Be clearer that applications can enforce additional requirements wrt digest<a href="#appendix-H.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.1-1.2">
+            <p id="appendix-H.1-1.2.1">Change algorithm status names: s/standard/active, s/insecure/deprecated<a href="#appendix-H.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.1-1.3">
+            <p id="appendix-H.1-1.3.1">Remove "reserved" algorithm status<a href="#appendix-H.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.1-1.4">
+            <p id="appendix-H.1-1.4.1">Provide clear guidance about the use of standard or deprecated algorithms<a href="#appendix-H.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.1-1.5">
+            <p id="appendix-H.1-1.5.1">Editorial or minor changes<a href="#appendix-H.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-11">
+<section id="appendix-H.2">
+        <h3 id="name-since-draft-ietf-httpbis-dig">
+<a href="#name-since-draft-ietf-httpbis-dig" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-11</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.2-1.1">
+            <p id="appendix-H.2-1.1.1">Editorial or minor changes<a href="#appendix-H.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-10">
+<section id="appendix-H.3">
+        <h3 id="name-since-draft-ietf-httpbis-dige">
+<a href="#name-since-draft-ietf-httpbis-dige" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-10</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.3-1.1">
+            <p id="appendix-H.3-1.1.1">Editorial or minor changes<a href="#appendix-H.3-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-09">
+<section id="appendix-H.4">
+        <h3 id="name-since-draft-ietf-httpbis-diges">
+<a href="#name-since-draft-ietf-httpbis-diges" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-09</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.4-1.1">
+            <p id="appendix-H.4-1.1.1">Editorial or minor changes<a href="#appendix-H.4-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-08">
+<section id="appendix-H.5">
+        <h3 id="name-since-draft-ietf-httpbis-digest">
+<a href="#name-since-draft-ietf-httpbis-digest" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-08</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.5-1.1">
+            <p id="appendix-H.5-1.1.1">Add note about migrating from RFC 3230. #1968, #1971<a href="#appendix-H.5-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.5-1.2">
+            <p id="appendix-H.5-1.2.1">Clarify what Want-* means in responses. #2097<a href="#appendix-H.5-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.5-1.3">
+            <p id="appendix-H.5-1.3.1">Editorial changes to structure and to align to HTTP style guide.<a href="#appendix-H.5-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-07">
+<section id="appendix-H.6">
+        <h3 id="name-since-draft-ietf-httpbis-digest-">
+<a href="#name-since-draft-ietf-httpbis-digest-" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-07</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.6-1.1">
+            <p id="appendix-H.6-1.1.1">Introduced Repr-Digest and Want-Repr-Digest, and deprecated
+Digest and Want-Digest. Use of Structured Fields. #1993, #1919<a href="#appendix-H.6-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.6-1.2">
+            <p id="appendix-H.6-1.2.1">IANA refactoring. #1983<a href="#appendix-H.6-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.6-1.3">
+            <p id="appendix-H.6-1.3.1">No normative text in security considerations. #1972<a href="#appendix-H.6-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-06">
+<section id="appendix-H.7">
+        <h3 id="name-since-draft-ietf-httpbis-digest-h">
+<a href="#name-since-draft-ietf-httpbis-digest-h" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-06</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.7-1.1">
+            <p id="appendix-H.7-1.1.1">Remove id-sha-256 and id-sha-512 from the list of supported algorithms #855<a href="#appendix-H.7-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-05">
+<section id="appendix-H.8">
+        <h3 id="name-since-draft-ietf-httpbis-digest-he">
+<a href="#name-since-draft-ietf-httpbis-digest-he" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-05</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.8-1.1">
+            <p id="appendix-H.8-1.1.1">Reboot digest-algorithm values registry #1567<a href="#appendix-H.8-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.8-1.2">
+            <p id="appendix-H.8-1.2.1">Add Content-Digest #1542<a href="#appendix-H.8-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.8-1.3">
+            <p id="appendix-H.8-1.3.1">Remove SRI section #1478<a href="#appendix-H.8-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-04">
+<section id="appendix-H.9">
+        <h3 id="name-since-draft-ietf-httpbis-digest-hea">
+<a href="#name-since-draft-ietf-httpbis-digest-hea" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-04</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.9-1.1">
+            <p id="appendix-H.9-1.1.1">Improve SRI section #1354<a href="#appendix-H.9-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.9-1.2">
+            <p id="appendix-H.9-1.2.1">About duplicate digest-algorithms #1221<a href="#appendix-H.9-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.9-1.3">
+            <p id="appendix-H.9-1.3.1">Improve security considerations #852<a href="#appendix-H.9-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.9-1.4">
+            <p id="appendix-H.9-1.4.1">md5 and sha deprecation references #1392<a href="#appendix-H.9-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.9-1.5">
+            <p id="appendix-H.9-1.5.1">Obsolete 3230 #1395<a href="#appendix-H.9-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.9-1.6">
+            <p id="appendix-H.9-1.6.1">Editorial #1362<a href="#appendix-H.9-1.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-03">
+<section id="appendix-H.10">
+        <h3 id="name-since-draft-ietf-httpbis-digest-hea-2">
+<a href="#name-since-draft-ietf-httpbis-digest-hea-2" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-03</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.10-1.1">
+            <p id="appendix-H.10-1.1.1">Reference semantics-12<a href="#appendix-H.10-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.10-1.2">
+            <p id="appendix-H.10-1.2.1">Detail encryption quirks<a href="#appendix-H.10-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.10-1.3">
+            <p id="appendix-H.10-1.3.1">Details on Algorithm agility #1250<a href="#appendix-H.10-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.10-1.4">
+            <p id="appendix-H.10-1.4.1">Obsolete parameters #850<a href="#appendix-H.10-1.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-02">
+<section id="appendix-H.11">
+        <h3 id="name-since-draft-ietf-httpbis-digest-hea-3">
+<a href="#name-since-draft-ietf-httpbis-digest-hea-3" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-02</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.11-1.1">
+            <p id="appendix-H.11-1.1.1">Deprecate SHA-1 #1154<a href="#appendix-H.11-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.2">
+            <p id="appendix-H.11-1.2.1">Avoid id-* with encrypted content<a href="#appendix-H.11-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.3">
+            <p id="appendix-H.11-1.3.1">Digest is independent of MESSAGING and HTTP/1.1 is not normative #1215<a href="#appendix-H.11-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.4">
+            <p id="appendix-H.11-1.4.1">Identity is not a valid field value for content-encoding #1223<a href="#appendix-H.11-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.5">
+            <p id="appendix-H.11-1.5.1">Mention trailers #1157<a href="#appendix-H.11-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.6">
+            <p id="appendix-H.11-1.6.1">Reference httpbis-semantics #1156<a href="#appendix-H.11-1.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.7">
+            <p id="appendix-H.11-1.7.1">Add contentMD5 as an obsoleted digest-algorithm #1249<a href="#appendix-H.11-1.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.11-1.8">
+            <p id="appendix-H.11-1.8.1">Use lowercase digest-algorithms names in the doc and in the digest-algorithm IANA table.<a href="#appendix-H.11-1.8.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-01">
+<section id="appendix-H.12">
+        <h3 id="name-since-draft-ietf-httpbis-digest-hea-4">
+<a href="#name-since-draft-ietf-httpbis-digest-hea-4" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-01</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.12-1.1">
+            <p id="appendix-H.12-1.1.1">Digest of error responses is computed on the error representation-data #1004<a href="#appendix-H.12-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.12-1.2">
+            <p id="appendix-H.12-1.2.1">Effect of HTTP semantics on payload and message body moved to appendix #1122<a href="#appendix-H.12-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.12-1.3">
+            <p id="appendix-H.12-1.3.1">Editorial refactoring, moving headers sections up. #1109-#1112, #1116,
+#1117, #1122-#1124<a href="#appendix-H.12-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="since-draft-ietf-httpbis-digest-headers-00">
+<section id="appendix-H.13">
+        <h3 id="name-since-draft-ietf-httpbis-digest-hea-5">
+<a href="#name-since-draft-ietf-httpbis-digest-hea-5" class="section-name selfRef">Since draft-ietf-httpbis-digest-headers-00</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-H.13-1.1">
+            <p id="appendix-H.13-1.1.1">Align title with document name<a href="#appendix-H.13-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.2">
+            <p id="appendix-H.13-1.2.1">Add id-sha-* algorithm examples #880<a href="#appendix-H.13-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.3">
+            <p id="appendix-H.13-1.3.1">Reference <span>[<a href="#RFC6234" class="cite xref">RFC6234</a>]</span> and <span>[<a href="#RFC3174" class="cite xref">RFC3174</a>]</span> instead of FIPS-1<a href="#appendix-H.13-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.4">
+            <p id="appendix-H.13-1.4.1">Deprecate MD5<a href="#appendix-H.13-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.5">
+            <p id="appendix-H.13-1.5.1">Obsolete ADLER-32 but don't forbid it #828<a href="#appendix-H.13-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.6">
+            <p id="appendix-H.13-1.6.1">Update CRC32C value in IANA table #828<a href="#appendix-H.13-1.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.7">
+            <p id="appendix-H.13-1.7.1">Use when acting on resources (POST, PATCH) #853<a href="#appendix-H.13-1.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.8">
+            <p id="appendix-H.13-1.8.1">Added Relationship with SRI, draft Use Cases #868, #971<a href="#appendix-H.13-1.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-H.13-1.9">
+            <p id="appendix-H.13-1.9.1">Warn about the implications of <code>Content-Location</code><a href="#appendix-H.13-1.9.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-I">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Roberto Polli</span></div>
+<div dir="auto" class="left"><span class="org">Team Digitale, Italian Government</span></div>
+<div dir="auto" class="left"><span class="country-name">Italy</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:robipolli@gmail.com" class="email">robipolli@gmail.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Lucas Pardue</span></div>
+<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:lucaspardue.24.7@gmail.com" class="email">lucaspardue.24.7@gmail.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
