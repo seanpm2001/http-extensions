@@ -1,4 +1,4 @@
-# Editor's drafts for bemasc-2643 branch of [httpwg/http-extensions](https://github.com/httpwg/http-extensions/tree/bemasc-2643)
+# Editor's drafts for digest-auth48 branch of [httpwg/http-extensions](https://github.com/httpwg/http-extensions/tree/digest-auth48)
 
 | Draft |     |     |     |
 | ----- | --- | --- | --- |

@@ -1025,11 +1025,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Templated CONNECT-TCP</td>
-<td class="right">November 2023</td>
+<td class="right">December 2023</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Schwartz</td>
-<td class="center">Expires 2 June 2024</td>
+<td class="center">Expires 4 June 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1042,12 +1042,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-httpbis-connect-tcp-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-11-30" class="published">30 November 2023</time>
+<time datetime="2023-12-02" class="published">2 December 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-06-02">2 June 2024</time></dd>
+<dd class="expires"><time datetime="2024-06-04">4 June 2024</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1081,7 +1081,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 2 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 4 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1135,9 +1135,6 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-in-http-2-and-http-3" class="internal xref">In HTTP/2 and HTTP/3</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-use-of-relevant-headers" class="internal xref">Use of Relevant Headers</a></p>
 </li>
             </ul>
 </li>
@@ -1223,8 +1220,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
         <h3 id="name-problems">
 <a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-problems" class="section-name selfRef">Problems</a>
         </h3>
-<p id="section-1.2-1">Classic HTTP CONNECT proxies are identified by a host, port, and scheme.  The proxy does not have a path of its own.  This prevents any origin from hosting multiple distinct proxy services.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
-<p id="section-1.2-2">Ordinarily, HTTP allows multiple origin hostnames to share a single server IP address and port number (i.e., virtual-hosting), by specifying the applicable hostname in the "Host" or ":authority" header field.  However, classic HTTP CONNECT proxies use these fields to indicate the CONNECT request's destination (<span>[<a href="#RFC9112" class="cite xref">RFC9112</a>], <a href="https://rfc-editor.org/rfc/rfc9112#section-3.2.3" class="relref">Section 3.2.3</a></span>), leaving no way to distinguish multiple proxies on one server.  As a result, classic HTTP CONNECT proxies cannot be deployed using virtual-hosting, nor can they apply the usual defenses against server port misdirection attacks (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).  The absence of an explicit origin for the proxy also creates ambiguity about the use of origin-scoped response header fields such as Alt-Svc <span>[<a href="#RFC7838" class="cite xref">RFC7838</a>]</span> and Strict-Transport-Security <span>[<a href="#RFC6797" class="cite xref">RFC6797</a>]</span>.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-1">Classic HTTP CONNECT proxies are identified by an origin.  The proxy does not have a path of its own.  This prevents any origin from hosting multiple distinct proxy services.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">Ordinarily, HTTP allows multiple origin hostnames to share a single server IP address and port number (i.e., virtual-hosting), by specifying the applicable hostname in the "Host" or ":authority" header field.  However, classic HTTP CONNECT proxies use these fields to indicate the CONNECT request's destination (<span>[<a href="#RFC9112" class="cite xref">RFC9112</a>], <a href="https://rfc-editor.org/rfc/rfc9112#section-3.2.3" class="relref">Section 3.2.3</a></span>), leaving no way to determine the proxy's origin from the request.  As a result, classic HTTP CONNECT proxies cannot be deployed using virtual-hosting, nor can they apply the usual defenses against server port misdirection attacks (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">Classic HTTP CONNECT proxies can be used to reach a target host that is specified as a domain name or an IP address.  However, because only a single target host can be specified, proxy-driven Happy Eyeballs and cross-IP fallback can only be used when the host is a domain name.  For IP-targeted requests to succeed, the client must know which address families are supported by the proxy via some out-of-band mechanism, or open multiple independent CONNECT requests and abandon any that prove unnecessary.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1353,15 +1350,6 @@ HEADERS
           </figcaption></figure>
 </section>
 </div>
-<div id="use-of-relevant-headers">
-<section id="section-3.3">
-        <h3 id="name-use-of-relevant-headers">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-use-of-relevant-headers" class="section-name selfRef">Use of Relevant Headers</a>
-        </h3>
-<p id="section-3.3-1">A templated TCP proxy has an unambiguous origin of its own.  Origin-scoped HTTP header fields such as Alt-Svc <span>[<a href="#RFC7838" class="cite xref">RFC7838</a>]</span> and Strict-Transport-Security <span>[<a href="#RFC6797" class="cite xref">RFC6797</a>]</span> apply to this origin.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2">In a web browser, authentication for templated TCP proxy requests uses a "407 (Proxy Authentication Required)" response, and the "Proxy-Authenticate" and "Proxy-Authorization" header fields.  Non-proxy-related requests to the same origin continue to use "WWW-Authenticate" and "Authorization" header fields.  This distinction is not technically required, but it may facilitate separation of credentials between the browser and the webpage contents.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
-</section>
-</div>
 </section>
 </div>
 <div id="additional-connection-setup-behaviors">
@@ -1413,10 +1401,10 @@ HEADERS
 <p id="section-5.2-2">In some cases, it is valuable to allow "connect-tcp" clients to reach "connect-tcp"-only proxies when using a legacy configuration method that cannot convey a URI template.  To support this arrangement, clients <span class="bcp14">SHOULD</span> treat certain errors during classic HTTP CONNECT as indications that the proxy might only support "connect-tcp":<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.1">
-            <p id="section-5.2-3.1.1">In HTTP/1.1: the response status code is 426 "Upgrade Required", with an "Upgrade: connect-tcp" response header.<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-3.1.1">In HTTP/1.1: the response status code is "426 (Upgrade Required)", with an "Upgrade: connect-tcp" response header.<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-3.2">
-            <p id="section-5.2-3.2.1">In any HTTP version: the response status code is 501 "Not Implemented".<a href="#section-5.2-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.2-3.2.1">In any HTTP version: the response status code is "501 (Not Implemented)".<a href="#section-5.2-3.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.2.2.1">
                 <p id="section-5.2-3.2.2.1.1">Requires SETTINGS_ENABLE_CONNECT_PROTOCOL to have been negotiated in HTTP/2 or HTTP/3.<a href="#section-5.2-3.2.2.1.1" class="pilcrow">¶</a></p>
@@ -1607,14 +1595,6 @@ https://proxy.example/{?target_host,tcp_port,target_port,
 <dt id="I-D.ietf-masque-connect-ip">[I-D.ietf-masque-connect-ip]</dt>
         <dd>
 <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Schinazi, D.</span>, <span class="refAuthor">Chernyakhovsky, A.</span>, <span class="refAuthor">Kühlewind, M.</span>, and <span class="refAuthor">M. Westerlund</span>, <span class="refTitle">"Proxying IP in HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-masque-connect-ip-13</span>, <time datetime="2023-04-28" class="refDate">28 April 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-ip-13">https://datatracker.ietf.org/doc/html/draft-ietf-masque-connect-ip-13</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC6797">[RFC6797]</dt>
-        <dd>
-<span class="refAuthor">Hodges, J.</span>, <span class="refAuthor">Jackson, C.</span>, and <span class="refAuthor">A. Barth</span>, <span class="refTitle">"HTTP Strict Transport Security (HSTS)"</span>, <span class="seriesInfo">RFC 6797</span>, <span class="seriesInfo">DOI 10.17487/RFC6797</span>, <time datetime="2012-11" class="refDate">November 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6797">https://www.rfc-editor.org/rfc/rfc6797</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC7838">[RFC7838]</dt>
-        <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refAuthor">McManus, P.</span>, and <span class="refAuthor">J. Reschke</span>, <span class="refTitle">"HTTP Alternative Services"</span>, <span class="seriesInfo">RFC 7838</span>, <span class="seriesInfo">DOI 10.17487/RFC7838</span>, <time datetime="2016-04" class="refDate">April 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7838">https://www.rfc-editor.org/rfc/rfc7838</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9112">[RFC9112]</dt>
         <dd>
