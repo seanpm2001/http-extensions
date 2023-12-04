@@ -1137,7 +1137,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-in-http-2-and-http-3" class="internal xref">In HTTP/2 and HTTP/3</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-use-of-relevant-headers" class="internal xref">Use of Relevant Headers</a></p>
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-use-of-origin-scoped-header" class="internal xref">Use of Origin-Scoped Headers</a></p>
 </li>
             </ul>
 </li>
@@ -1223,7 +1223,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         <h3 id="name-problems">
 <a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-problems" class="section-name selfRef">Problems</a>
         </h3>
-<p id="section-1.2-1">Classic HTTP CONNECT proxies are identified by a host, port, and scheme.  The proxy does not have a path of its own.  This prevents any origin from hosting multiple distinct proxy services.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-1">Classic HTTP CONNECT proxies are identified by a host, a port number, and optionally a security protocol.  The proxy does not have a path of its own.  This prevents any HTTP origin from hosting multiple distinct proxy services.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
 <p id="section-1.2-2">Ordinarily, HTTP allows multiple origin hostnames to share a single server IP address and port number (i.e., virtual-hosting), by specifying the applicable hostname in the "Host" or ":authority" header field.  However, classic HTTP CONNECT proxies use these fields to indicate the CONNECT request's destination (<span>[<a href="#RFC9112" class="cite xref">RFC9112</a>], <a href="https://rfc-editor.org/rfc/rfc9112#section-3.2.3" class="relref">Section 3.2.3</a></span>), leaving no way to distinguish multiple proxies on one server.  As a result, classic HTTP CONNECT proxies cannot be deployed using virtual-hosting, nor can they apply the usual defenses against server port misdirection attacks (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).  The absence of an explicit origin for the proxy also creates ambiguity about the use of origin-scoped response header fields such as Alt-Svc <span>[<a href="#RFC7838" class="cite xref">RFC7838</a>]</span> and Strict-Transport-Security <span>[<a href="#RFC6797" class="cite xref">RFC6797</a>]</span>.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">Classic HTTP CONNECT proxies can be used to reach a target host that is specified as a domain name or an IP address.  However, because only a single target host can be specified, proxy-driven Happy Eyeballs and cross-IP fallback can only be used when the host is a domain name.  For IP-targeted requests to succeed, the client must know which address families are supported by the proxy via some out-of-band mechanism, or open multiple independent CONNECT requests and abandon any that prove unnecessary.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
 </section>
@@ -1353,13 +1353,12 @@ HEADERS
           </figcaption></figure>
 </section>
 </div>
-<div id="use-of-relevant-headers">
+<div id="use-of-origin-scoped-headers">
 <section id="section-3.3">
-        <h3 id="name-use-of-relevant-headers">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-use-of-relevant-headers" class="section-name selfRef">Use of Relevant Headers</a>
+        <h3 id="name-use-of-origin-scoped-header">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-use-of-origin-scoped-header" class="section-name selfRef">Use of Origin-Scoped Headers</a>
         </h3>
 <p id="section-3.3-1">A templated TCP proxy has an unambiguous origin of its own.  Origin-scoped HTTP header fields such as Alt-Svc <span>[<a href="#RFC7838" class="cite xref">RFC7838</a>]</span> and Strict-Transport-Security <span>[<a href="#RFC6797" class="cite xref">RFC6797</a>]</span> apply to this origin when they are associated with a templated TCP proxy request or response.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2">In a web browser, authentication for templated TCP proxy requests uses a "407 (Proxy Authentication Required)" response, and the "Proxy-Authenticate" and "Proxy-Authorization" header fields.  Non-proxy-related requests to the same origin continue to use "WWW-Authenticate" and "Authorization" header fields.  This distinction is not technically required, but it may facilitate separation of credentials between the browser and the webpage contents.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
