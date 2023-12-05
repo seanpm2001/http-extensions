@@ -28,7 +28,7 @@
     requests 2.31.0
     setuptools 67.7.2
     six 1.16.0
-    wcwidth 0.2.10
+    wcwidth 0.2.12
 -->
 <link href="draft-ietf-httpbis-resumable-upload.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1027,11 +1027,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Resumable Uploads</td>
-<td class="right">November 2023</td>
+<td class="right">December 2023</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kleidl, et al.</td>
-<td class="center">Expires 2 June 2024</td>
+<td class="center">Expires 7 June 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1044,12 +1044,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-httpbis-resumable-upload-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-11-30" class="published">30 November 2023</time>
+<time datetime="2023-12-05" class="published">5 December 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-06-02">2 June 2024</time></dd>
+<dd class="expires"><time datetime="2024-06-07">7 June 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1109,7 +1109,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 2 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1521,7 +1521,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-4-2">As a consequence, resumable uploads support all HTTP request methods that can carry content, such as <code>POST</code>, <code>PUT</code>, and <code>PATCH</code>. Similarly, the response to the upload request can have any status code. Both the method(s) and status code(s) supported are determined by the resource.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <p id="section-4-3"><code>Upload-Complete</code> <span class="bcp14">MUST</span> be set to false if the end of the request content is not the end of the upload. Otherwise, it <span class="bcp14">MUST</span> be set to true. This header field can be used for request identification by a server. The request <span class="bcp14">MUST NOT</span> include the <code>Upload-Offset</code> header field.<a href="#section-4-3" class="pilcrow">¶</a></p>
 <p id="section-4-4">If the request is valid, the server <span class="bcp14">SHOULD</span> create an upload resource. Then, the server <span class="bcp14">MUST</span> include the <code>Location</code> header field in the response and set its value to the URL of the upload resource. The client <span class="bcp14">MAY</span> use this URL for offset retrieval (<a href="#offset-retrieving" class="auto internal xref">Section 5</a>), upload append (<a href="#upload-appending" class="auto internal xref">Section 6</a>), and upload cancellation (<a href="#upload-cancellation" class="auto internal xref">Section 7</a>).<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">Once the upload resource is available, the target resource <span class="bcp14">MAY</span> send an informational response with a <code>104 (Upload Resumption Supported)</code> status code to the client while the request content is being uploaded. In this informational response, the <code>Location</code> header field <span class="bcp14">MUST</span> be set to the upload resource.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-5">Once the upload resource is available and while the request content is being uploaded, the target resource <span class="bcp14">MAY</span> send one or more informational responses with a <code>104 (Upload Resumption Supported)</code> status code to the client. In the first informational response, the <code>Location</code> header field <span class="bcp14">MUST</span> be set to the URL pointing to the upload resource. In subsequent informational responses, the <code>Location</code> header field <span class="bcp14">MUST NOT</span> be set. An informational response <span class="bcp14">MAY</span> contain the <code>Upload-Offset</code> header field with the current upload offset as the value to inform the client about the upload progress. In subsequent informational responses, the upload offset <span class="bcp14">MUST NOT</span> be smaller than in previous informational responses. In addition, later offset retrievals (<a href="#offset-retrieving" class="auto internal xref">Section 5</a>) <span class="bcp14">MUST NOT</span> receive an upload offset that is less than the offset reported in the latest informational response, allowing the client to free associated resources.<a href="#section-4-5" class="pilcrow">¶</a></p>
 <p id="section-4-6">The server <span class="bcp14">MUST</span> send the <code>Upload-Offset</code> header field in the response if it considers the upload active, either when the response is a success (e.g. <code>201 (Created)</code>), or when the response is a failure (e.g. <code>409 (Conflict)</code>). The <code>Upload-Offset</code> field value <span class="bcp14">MUST</span> be equal to the end offset of the entire upload, or the begin offset of the next chunk if the upload is still incomplete. The client <span class="bcp14">SHOULD</span> consider the upload failed if the response has a status code that indicates a success but the offset indicated in the <code>Upload-Offset</code> field value does not equal the total of begin offset plus the number of bytes uploaded in the request.<a href="#section-4-6" class="pilcrow">¶</a></p>
 <p id="section-4-7">If the request completes successfully and the entire upload is complete, the server <span class="bcp14">MUST</span> acknowledge it by responding with a successful status code between 200 and 299 (inclusive). Servers are <span class="bcp14">RECOMMENDED</span> to use <code>201 (Created)</code> unless otherwise specified. The response <span class="bcp14">MUST NOT</span> include the <code>Upload-Complete</code> header field with the value of false.<a href="#section-4-7" class="pilcrow">¶</a></p>
 <p id="section-4-8">If the request completes successfully but the entire upload is not yet complete, as indicated by an <code>Upload-Complete</code> field value of false in the request, the server <span class="bcp14">MUST</span> acknowledge it by responding with the <code>201 (Created)</code> status code and an <code>Upload-Complete</code> header value set to false.<a href="#section-4-8" class="pilcrow">¶</a></p>
@@ -1540,6 +1540,10 @@ content-length: 100
 :status: 104
 upload-draft-interop-version: 4
 location: https://example.com/upload/b530ce8ff
+
+:status: 104
+upload-draft-interop-version: 4
+upload-offset: 50
 
 :status: 201
 location: https://example.com/upload/b530ce8ff
@@ -1639,11 +1643,12 @@ cache-control: no-store
 <p id="section-6-5">If the server does not consider the upload associated with the upload resource active, it <span class="bcp14">MUST</span> respond with a <code>404 (Not Found)</code> status code.<a href="#section-6-5" class="pilcrow">¶</a></p>
 <p id="section-6-6">The client <span class="bcp14">MUST NOT</span> perform multiple upload transfers for the same upload resource in parallel. This helps avoid race conditions, and data loss or corruption. The server is <span class="bcp14">RECOMMENDED</span> to take measures to avoid parallel upload transfers: The server <span class="bcp14">MAY</span> terminate any creation (<a href="#upload-creation" class="auto internal xref">Section 4</a>) or append (<a href="#upload-appending" class="auto internal xref">Section 6</a>) for the same upload URL. Since the client is not allowed to perform multiple transfers in parallel, the server can assume that the previous attempt has already failed. Therefore, the server <span class="bcp14">MAY</span> abruptly terminate the previous HTTP connection or stream.<a href="#section-6-6" class="pilcrow">¶</a></p>
 <p id="section-6-7">If the offset indicated by the <code>Upload-Offset</code> field value does not match the offset provided by the immediate previous offset retrieval (<a href="#offset-retrieving" class="auto internal xref">Section 5</a>), or the end offset of the immediate previous incomplete successful transfer, the server <span class="bcp14">MUST</span> respond with a <code>409 (Conflict)</code> status code.<a href="#section-6-7" class="pilcrow">¶</a></p>
-<p id="section-6-8">The server <span class="bcp14">MUST</span> send the <code>Upload-Offset</code> header field in the response if it considers the upload active, either when the response is a success (e.g. <code>201 (Created)</code>), or when the response is a failure (e.g. <code>409 (Conflict)</code>). The value <span class="bcp14">MUST</span> be equal to the end offset of the entire upload, or the begin offset of the next chunk if the upload is still incomplete. The client <span class="bcp14">SHOULD</span> consider the upload failed if the status code indicates a success but the offset indicated by the <code>Upload-Offset</code> field value does not equal the total of begin offset plus the number of bytes uploaded in the request.<a href="#section-6-8" class="pilcrow">¶</a></p>
-<p id="section-6-9">If the request completes successfully and the entire upload is complete, the server <span class="bcp14">MUST</span> acknowledge it by responding with a successful status code between 200 and 299 (inclusive). Servers are <span class="bcp14">RECOMMENDED</span> to use a <code>201 (Created)</code> response if not otherwise specified. The response <span class="bcp14">MUST NOT</span> include the <code>Upload-Complete</code> header field with the value set to false.<a href="#section-6-9" class="pilcrow">¶</a></p>
-<p id="section-6-10">If the request completes successfully but the entire upload is not yet complete indicated by the <code>Upload-Complete</code> field value set to false, the server <span class="bcp14">MUST</span> acknowledge it by responding with a <code>201 (Created)</code> status code and the <code>Upload-Complete</code> field value set to true.<a href="#section-6-10" class="pilcrow">¶</a></p>
-<p id="section-6-11">If the request includes the <code>Upload-Complete</code> field value set to true  and a valid <code>Content-Length</code> header field, the client attempts to upload the remaining resource in one request. In this case, the upload's final size is the sum of the upload's offset and the <code>Content-Length</code> header field. If the server does not have a record of the upload's final size from creation or the previous append, the server <span class="bcp14">MUST</span> record the upload's final size to ensure its consistency. If the server does have a previous record, that value <span class="bcp14">MUST</span> match the upload's final size. If they do not match, the server <span class="bcp14">MUST</span> reject the request with a <code>400 (Bad Request)</code> status code.<a href="#section-6-11" class="pilcrow">¶</a></p>
-<div class="lang-example sourcecode" id="section-6-12">
+<p id="section-6-8">While the request content is being uploaded, the target resource <span class="bcp14">MAY</span> send one or more informational responses with a <code>104 (Upload Resumption Supported)</code> status code to the client. These informational responses <span class="bcp14">MUST NOT</span> contain the <code>Location</code> header field. They <span class="bcp14">MAY</span> include the <code>Upload-Offset</code> header field with the current upload offset as the value to inform the client about the upload progress. The same restrictions on the <code>Upload-Offset</code> header field in informational responses from the upload creation (<a href="#upload-creation" class="auto internal xref">Section 4</a>) apply.<a href="#section-6-8" class="pilcrow">¶</a></p>
+<p id="section-6-9">The server <span class="bcp14">MUST</span> send the <code>Upload-Offset</code> header field in the response if it considers the upload active, either when the response is a success (e.g. <code>201 (Created)</code>), or when the response is a failure (e.g. <code>409 (Conflict)</code>). The value <span class="bcp14">MUST</span> be equal to the end offset of the entire upload, or the begin offset of the next chunk if the upload is still incomplete. The client <span class="bcp14">SHOULD</span> consider the upload failed if the status code indicates a success but the offset indicated by the <code>Upload-Offset</code> field value does not equal the total of begin offset plus the number of bytes uploaded in the request.<a href="#section-6-9" class="pilcrow">¶</a></p>
+<p id="section-6-10">If the request completes successfully and the entire upload is complete, the server <span class="bcp14">MUST</span> acknowledge it by responding with a successful status code between 200 and 299 (inclusive). Servers are <span class="bcp14">RECOMMENDED</span> to use a <code>201 (Created)</code> response if not otherwise specified. The response <span class="bcp14">MUST NOT</span> include the <code>Upload-Complete</code> header field with the value set to false.<a href="#section-6-10" class="pilcrow">¶</a></p>
+<p id="section-6-11">If the request completes successfully but the entire upload is not yet complete indicated by the <code>Upload-Complete</code> field value set to false, the server <span class="bcp14">MUST</span> acknowledge it by responding with a <code>201 (Created)</code> status code and the <code>Upload-Complete</code> field value set to true.<a href="#section-6-11" class="pilcrow">¶</a></p>
+<p id="section-6-12">If the request includes the <code>Upload-Complete</code> field value set to true  and a valid <code>Content-Length</code> header field, the client attempts to upload the remaining resource in one request. In this case, the upload's final size is the sum of the upload's offset and the <code>Content-Length</code> header field. If the server does not have a record of the upload's final size from creation or the previous append, the server <span class="bcp14">MUST</span> record the upload's final size to ensure its consistency. If the server does have a previous record, that value <span class="bcp14">MUST</span> match the upload's final size. If they do not match, the server <span class="bcp14">MUST</span> reject the request with a <code>400 (Bad Request)</code> status code.<a href="#section-6-12" class="pilcrow">¶</a></p>
+<div class="lang-example sourcecode" id="section-6-13">
 <pre>
 :method: PATCH
 :scheme: https
@@ -1656,9 +1661,9 @@ content-length: 100
 
 :status: 201
 upload-offset: 200
-</pre><a href="#section-6-12" class="pilcrow">¶</a>
+</pre><a href="#section-6-13" class="pilcrow">¶</a>
 </div>
-<p id="section-6-13">The client <span class="bcp14">MAY</span> automatically attempt upload resumption when the connection is terminated unexpectedly, or if a server error status code between 500 and 599 (inclusive) is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a client error status code between 400 and 499 (inclusive) is received.<a href="#section-6-13" class="pilcrow">¶</a></p>
+<p id="section-6-14">The client <span class="bcp14">MAY</span> automatically attempt upload resumption when the connection is terminated unexpectedly, or if a server error status code between 500 and 599 (inclusive) is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a client error status code between 400 and 499 (inclusive) is received.<a href="#section-6-14" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="upload-cancellation">

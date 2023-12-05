@@ -5,10 +5,10 @@
 HTTP                                                      M. Kleidl, Ed.
 Internet-Draft                                               Transloadit
 Intended status: Standards Track                           G. Zhang, Ed.
-Expires: 2 June 2024                                          Apple Inc.
+Expires: 7 June 2024                                          Apple Inc.
                                                           L. Pardue, Ed.
                                                               Cloudflare
-                                                        30 November 2023
+                                                         5 December 2023
 
 
                        Resumable Uploads for HTTP
@@ -57,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 June 2024.
+   This Internet-Draft will expire on 7 June 2024.
 
 Copyright Notice
 
@@ -330,11 +330,20 @@ Table of Contents
    client MAY use this URL for offset retrieval (Section 5), upload
    append (Section 6), and upload cancellation (Section 7).
 
-   Once the upload resource is available, the target resource MAY send
-   an informational response with a 104 (Upload Resumption Supported)
-   status code to the client while the request content is being
-   uploaded.  In this informational response, the Location header field
-   MUST be set to the upload resource.
+   Once the upload resource is available and while the request content
+   is being uploaded, the target resource MAY send one or more
+   informational responses with a 104 (Upload Resumption Supported)
+   status code to the client.  In the first informational response, the
+   Location header field MUST be set to the URL pointing to the upload
+   resource.  In subsequent informational responses, the Location header
+   field MUST NOT be set.  An informational response MAY contain the
+   Upload-Offset header field with the current upload offset as the
+   value to inform the client about the upload progress.  In subsequent
+   informational responses, the upload offset MUST NOT be smaller than
+   in previous informational responses.  In addition, later offset
+   retrievals (Section 5) MUST NOT receive an upload offset that is less
+   than the offset reported in the latest informational response,
+   allowing the client to free associated resources.
 
    The server MUST send the Upload-Offset header field in the response
    if it considers the upload active, either when the response is a
@@ -378,6 +387,10 @@ Table of Contents
    :status: 104
    upload-draft-interop-version: 4
    location: https://example.com/upload/b530ce8ff
+
+   :status: 104
+   upload-draft-interop-version: 4
+   upload-offset: 50
 
    :status: 201
    location: https://example.com/upload/b530ce8ff
@@ -565,6 +578,15 @@ Table of Contents
    (Section 5), or the end offset of the immediate previous incomplete
    successful transfer, the server MUST respond with a 409 (Conflict)
    status code.
+
+   While the request content is being uploaded, the target resource MAY
+   send one or more informational responses with a 104 (Upload
+   Resumption Supported) status code to the client.  These informational
+   responses MUST NOT contain the Location header field.  They MAY
+   include the Upload-Offset header field with the current upload offset
+   as the value to inform the client about the upload progress.  The
+   same restrictions on the Upload-Offset header field in informational
+   responses from the upload creation (Section 4) apply.
 
    The server MUST send the Upload-Offset header field in the response
    if it considers the upload active, either when the response is a
