@@ -113,14 +113,14 @@ Table of Contents
    ":authority" header field.  This allows servers to colocate multiple
    origins on a single server IP address and port number, a practice
    known as "virtual hosting".  However, the classic CONNECT method is
-   an exception: it targets an HTTP proxy, which is not identified in
-   the HTTP request.  As a result, classic CONNECT cannot be deployed
-   using virtual hosting, nor can it implement the usual defenses
-   against server port misdirection attacks (see Section 7.4 of
-   [RFC9110]).  The absence of an explicit origin for the proxy also
-   creates ambiguity about the use of origin-scoped response header
-   fields such as "Alt-Svc" [RFC7838] and "Strict-Transport-Security"
-   [RFC6797].
+   an exception: it targets an HTTP proxy ([RFC9110], Section 3.7),
+   which is not identified in the HTTP request.  As a result, classic
+   CONNECT cannot be deployed using virtual hosting, nor can it
+   implement the usual defenses against server port misdirection attacks
+   (see Section 7.4 of [RFC9110]).  The absence of an explicit origin
+   for the proxy also creates ambiguity about the use of origin-scoped
+   response header fields such as "Alt-Svc" [RFC7838] and "Strict-
+   Transport-Security" [RFC6797].
 
    Classic HTTP CONNECT proxies can be used to reach a target host that
    is specified as a domain name or an IP address.  However, because
