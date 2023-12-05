@@ -104,9 +104,9 @@ Table of Contents
 1.2.  Problems
 
    Classic HTTP CONNECT proxies are identified by a host, a port number,
-   and optionally a security protocol.  The proxy does not have a path
-   of its own.  This prevents any HTTP origin from hosting multiple
-   distinct proxy services.
+   and whether a security protocol is used or not.  The proxy does not
+   have a path of its own.  This prevents any HTTP origin from hosting
+   multiple distinct proxy services.
 
    An ordinary HTTP request involves a URI, which includes an origin as
    a property.  Since clients specify origins in HTTP requests using the
