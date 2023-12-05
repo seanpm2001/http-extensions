@@ -5,7 +5,7 @@
 HTTP                                                      P. Meenan, Ed.
 Internet-Draft                                             Y. Weiss, Ed.
 Intended status: Standards Track                              Google LLC
-Expires: 6 June 2024                                     4 December 2023
+Expires: 7 June 2024                                     5 December 2023
 
 
                     Compression Dictionary Transport
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 June 2024.
+   This Internet-Draft will expire on 7 June 2024.
 
 Copyright Notice
 

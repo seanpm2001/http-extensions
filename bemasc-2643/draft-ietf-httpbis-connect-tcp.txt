@@ -4,8 +4,8 @@
 
 httpbis                                                   B. M. Schwartz
 Internet-Draft                                      Meta Platforms, Inc.
-Intended status: Standards Track                         4 December 2023
-Expires: 6 June 2024
+Intended status: Standards Track                         5 December 2023
+Expires: 7 June 2024
 
 
              Template-Driven HTTP CONNECT Proxying for TCP
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 June 2024.
+   This Internet-Draft will expire on 7 June 2024.
 
 Copyright Notice
 
@@ -108,18 +108,19 @@ Table of Contents
    of its own.  This prevents any HTTP origin from hosting multiple
    distinct proxy services.
 
-   Ordinarily, HTTP allows multiple origin hostnames to share a single
-   server IP address and port number (i.e., virtual-hosting), by
-   specifying the applicable hostname in the "Host" or ":authority"
-   header field.  However, classic HTTP CONNECT proxies use these fields
-   to indicate the CONNECT request's destination ([RFC9112],
-   Section 3.2.3), leaving no way to distinguish multiple proxies on one
-   server.  As a result, classic HTTP CONNECT proxies cannot be deployed
-   using virtual-hosting, nor can they apply the usual defenses against
-   server port misdirection attacks (see Section 7.4 of [RFC9110]).  The
-   absence of an explicit origin for the proxy also creates ambiguity
-   about the use of origin-scoped response header fields such as Alt-Svc
-   [RFC7838] and Strict-Transport-Security [RFC6797].
+   An ordinary HTTP request involves a URI, which includes an origin as
+   a property.  Since clients specify origins in HTTP requests using the
+   "Host" or ":authority" header field, servers can colocate multiple
+   origins on a single server IP address and port number, a practice
+   known as virtual hosting.  However, the classic CONNECT method is an
+   exception.  It targets a proxy, and the hostname of the proxy is not
+   included in the HTTP request.  As a result, classic CONNECT cannot be
+   deployed using virtual hosting, nor can it implement the usual
+   defenses against server port misdirection attacks (see Section 7.4 of
+   [RFC9110]).  The absence of an explicit origin for the proxy also
+   creates ambiguity about the use of origin-scoped response header
+   fields such as Alt-Svc [RFC7838] and Strict-Transport-Security
+   [RFC6797].
 
    Classic HTTP CONNECT proxies can be used to reach a target host that
    is specified as a domain name or an IP address.  However, because
@@ -494,10 +495,6 @@ Table of Contents
    [RFC7838]  Nottingham, M., McManus, P., and J. Reschke, "HTTP
               Alternative Services", RFC 7838, DOI 10.17487/RFC7838,
               April 2016, <https://www.rfc-editor.org/rfc/rfc7838>.
-
-   [RFC9112]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
-              Ed., "HTTP/1.1", STD 99, RFC 9112, DOI 10.17487/RFC9112,
-              June 2022, <https://www.rfc-editor.org/rfc/rfc9112>.
 
    [RFC9297]  Schinazi, D. and L. Pardue, "HTTP Datagrams and the
               Capsule Protocol", RFC 9297, DOI 10.17487/RFC9297, August
