@@ -103,11 +103,12 @@ Table of Contents
 
 1.2.  Problems
 
-   Classic HTTP CONNECT proxies are usually identified by an "http" or
-   "https" URI ([RFC9110], Section 7.3.2).  However, this URI cannot
-   specify a non-empty path, because classic CONNECT requests cannot
-   convey any path information.  This prevents any HTTP origin from
-   hosting multiple distinct proxy services.
+   HTTP proxies are usually identified by an "http" or "https" URI
+   ([RFC9110], Section 7.3.2).  However, HTTP requests do not convey any
+   of the proxy's URI components.  Instead, they only carry the URI of
+   the request target (i.e., the origin) or, in the case of CONNECT
+   requests, the host and port of the target.  This prevents any HTTP
+   server from hosting multiple distinct proxy services.
 
    An ordinary HTTP request indicates an origin using the "Host" or
    ":authority" header field.  This allows servers to colocate multiple
